@@ -122,15 +122,8 @@ export default function ObsidianLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   return (
-    <html lang="en">
-      <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Wimbledon Limousines — Obsidian</title>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Montserrat:wght@400;500;600;700;800&display=swap"
-          rel="stylesheet"
-        />
+    <div style={{ background: '#0F0F14', color: '#F0F0F5', minHeight: '100vh' }}>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Montserrat:wght@400;500;600;700;800&display=swap');`}</style>
         <style>{`
           *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
           html { scroll-behavior: smooth; }
@@ -182,9 +175,8 @@ export default function ObsidianLayout({ children }: { children: ReactNode }) {
             90% { opacity: 1; }
             100% { transform: translateY(100vh); opacity: 0; }
           }
-        `}</style>
-      </head>
-      <body>
+        `}
+        </style>
         {/* ── NAVBAR ── */}
         <nav
           style={{
@@ -343,7 +335,6 @@ export default function ObsidianLayout({ children }: { children: ReactNode }) {
             </span>
           </div>
         </footer>
-      </body>
-    </html>
+    </div>
   );
 }
