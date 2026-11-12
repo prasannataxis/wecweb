@@ -1,5 +1,14 @@
 export type Mode = "dark" | "light";
 export type AccentId = "gold" | "platinum" | "rose" | "bronze" | "emerald";
+export type TouchReveal = "tap" | "auto";
+export type IntroReturn = "once" | "idle" | "every";
+
+export type Settings = {
+  mode: Mode;
+  accent: AccentId;
+  touchReveal: TouchReveal;
+  introReturn: IntroReturn;
+};
 
 export const ACCENTS: { id: AccentId; name: string; swatch: string }[] = [
   { id: "gold", name: "Gold", swatch: "#C4A44A" },
@@ -9,10 +18,19 @@ export const ACCENTS: { id: AccentId; name: string; swatch: string }[] = [
   { id: "emerald", name: "Emerald", swatch: "#50C896" },
 ];
 
-export const DEFAULT_MODE: Mode = "dark";
-export const DEFAULT_ACCENT: AccentId = "gold";
+export const DEFAULT_SETTINGS: Settings = {
+  mode: "dark",
+  accent: "gold",
+  touchReveal: "tap",
+  introReturn: "once",
+};
 
-export const STORAGE_KEYS = { mode: "wl-mode", accent: "wl-accent" } as const;
+export const AUTO_REVEAL_MS = 3500;
+export const IDLE_RETURN_MS = 12000;
 
-// Runs in <head> before paint so the saved theme applies without a flash.
-export const themeInitScript = `(function(){try{var d=document.documentElement;d.dataset.mode=localStorage.getItem("${STORAGE_KEYS.mode}")||"${DEFAULT_MODE}";d.dataset.accent=localStorage.getItem("${STORAGE_KEYS.accent}")||"${DEFAULT_ACCENT}";}catch(e){}})();`;
+export const SETTINGS_KEY = "wl-settings";
+export const INTRO_SEEN_KEY = "wl-intro-seen";
+
+// Runs in <head> before paint: applies saved theme, and on the home page decides
+// whether the intro plays, so neither flashes the wrong state.
+export const themeInitScript = `(function(){try{var d=document.documentElement;var s=${JSON.stringify(DEFAULT_SETTINGS)};var raw=localStorage.getItem("${SETTINGS_KEY}");if(raw){var p=JSON.parse(raw);for(var k in p)s[k]=p[k];}d.dataset.mode=s.mode;d.dataset.accent=s.accent;if(location.pathname==="/"){var skip=location.hash==="#booking"||(s.introReturn==="once"&&sessionStorage.getItem("${INTRO_SEEN_KEY}")==="1");d.dataset.intro=skip?"done":"playing";}}catch(e){}})();`;

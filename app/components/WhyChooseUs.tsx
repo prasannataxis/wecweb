@@ -81,7 +81,7 @@ const features = [
 
 export default function WhyChooseUs() {
   return (
-    <section id="about" className="bg-luxury-black pt-40 pb-28 px-6">
+    <section id="about" className="bg-luxury-black pt-32 sm:pt-40 pb-20 sm:pb-28 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto">
 
         {/* Section header */}
@@ -93,7 +93,7 @@ export default function WhyChooseUs() {
           <h2 className="font-serif text-4xl md:text-5xl text-luxury-text font-bold">
             Why Choose Us
           </h2>
-          <p className="mt-4 text-luxury-muted text-sm font-sans font-light max-w-md mx-auto leading-relaxed tracking-wide">
+          <p className="mt-4 text-luxury-muted text-base font-sans font-light max-w-md mx-auto leading-relaxed tracking-wide">
             Every detail considered. Every journey perfected.
           </p>
         </div>
@@ -103,7 +103,7 @@ export default function WhyChooseUs() {
           {features.map((feat) => (
             <div
               key={feat.title}
-              className="group p-6 border border-luxury-border hover:border-gold/25 lift-glow flex flex-col gap-4"
+              className="luxury-card border-run lift-glow group p-6 flex flex-col gap-4"
             >
               {/* Icon */}
               <div className="text-gold/60 group-hover:text-gold transition-colors duration-300">
@@ -112,10 +112,10 @@ export default function WhyChooseUs() {
 
               {/* Content */}
               <div>
-                <h3 className="font-serif text-base text-luxury-text font-semibold mb-2 leading-snug">
+                <h3 className="font-serif text-lg text-luxury-text font-semibold mb-2 leading-snug">
                   {feat.title}
                 </h3>
-                <p className="text-luxury-muted text-xs font-sans font-light leading-relaxed">
+                <p className="text-luxury-muted text-sm font-sans font-light leading-relaxed">
                   {feat.description}
                 </p>
               </div>

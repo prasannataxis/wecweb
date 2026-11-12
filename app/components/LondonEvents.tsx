@@ -51,7 +51,7 @@ const events = [
 
 export default function LondonEvents() {
   return (
-    <section id="events" className="bg-luxury-dark pt-40 pb-28 px-6">
+    <section id="events" className="bg-luxury-dark pt-32 sm:pt-40 pb-20 sm:pb-28 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto">
 
         {/* Section header */}
@@ -63,7 +63,7 @@ export default function LondonEvents() {
           <h2 className="font-serif text-4xl md:text-5xl text-luxury-text font-bold">
             London Events
           </h2>
-          <p className="mt-4 text-luxury-muted text-sm font-sans font-light max-w-lg mx-auto leading-relaxed tracking-wide">
+          <p className="mt-4 text-luxury-muted text-base font-sans font-light max-w-lg mx-auto leading-relaxed tracking-wide">
             Book a dedicated chauffeur for London&apos;s finest events. We handle the traffic — you enjoy the occasion.
           </p>
         </div>
@@ -73,12 +73,12 @@ export default function LondonEvents() {
           {events.map((ev) => (
             <div
               key={ev.name}
-              className="group relative overflow-hidden bg-luxury-card2 border border-luxury-border hover:border-gold/30 lift-glow cursor-pointer"
+              className="group luxury-card border-run lift-glow"
               
             >
               {/* Accent glow */}
               <div
-                className="absolute inset-0 opacity-100"
+                className="absolute inset-0 pointer-events-none"
                 style={{ background: `radial-gradient(ellipse at top left, ${ev.accent}, transparent 70%)` }}
               />
 
@@ -96,7 +96,7 @@ export default function LondonEvents() {
                   <h3 className="font-serif text-xl text-luxury-text font-semibold leading-tight">
                     {ev.name}
                   </h3>
-                  <p className="text-xs text-luxury-muted font-sans mt-1">{ev.venue}</p>
+                  <p className="text-sm text-luxury-muted font-sans mt-1">{ev.venue}</p>
                 </div>
 
                 {/* Location */}
@@ -105,12 +105,12 @@ export default function LondonEvents() {
                     <circle cx="8" cy="6.5" r="2.5" />
                     <path d="M8 2C5.24 2 3 4.24 3 7c0 3.75 5 9 5 9s5-5.25 5-9c0-2.76-2.24-5-5-5z" />
                   </svg>
-                  <span className="text-xs font-sans">{ev.location}</span>
+                  <span className="text-sm font-sans">{ev.location}</span>
                 </div>
 
                 {/* CTA */}
                 <a
-                  href="#booking"
+                  href="/#booking"
                   className="mt-1 flex items-center justify-between py-3 px-4 border border-gold/20 hover:border-gold/60 hover:bg-gold/5 group-hover:border-gold/40 transition-all duration-300"
                 >
                   <span className="text-xs tracking-[0.2em] uppercase text-gold font-sans font-semibold">
@@ -126,9 +126,9 @@ export default function LondonEvents() {
         </div>
 
         {/* Footnote */}
-        <p className="text-center text-luxury-subtle text-xs font-sans mt-8 tracking-wide">
+        <p className="text-center text-luxury-muted text-sm font-sans mt-8 tracking-wide">
           Don&apos;t see your event? &nbsp;
-          <a href="#contact" className="text-gold hover:text-gold-light transition-colors underline underline-offset-2">
+          <a href="/contact" className="text-gold hover:text-gold-light transition-colors underline underline-offset-2">
             Contact us
           </a>
           &nbsp;— we cover all London and South East venues.

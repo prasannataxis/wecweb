@@ -72,7 +72,7 @@ function BaggageIcon() {
 
 export default function Fleet() {
   return (
-    <section id="fleet" className="bg-luxury-black pt-40 pb-28 px-6">
+    <section id="fleet" className="bg-luxury-black pt-32 sm:pt-40 pb-20 sm:pb-28 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto">
 
         {/* Section header */}
@@ -84,7 +84,7 @@ export default function Fleet() {
           <h2 className="font-serif text-4xl md:text-5xl text-luxury-text font-bold">
             The Fleet
           </h2>
-          <p className="mt-4 text-luxury-muted text-sm font-sans font-light max-w-md mx-auto leading-relaxed tracking-wide">
+          <p className="mt-4 text-luxury-muted text-base font-sans font-light max-w-md mx-auto leading-relaxed tracking-wide">
             A carefully curated collection of the finest luxury vehicles, maintained to the highest standard.
           </p>
         </div>
@@ -94,7 +94,7 @@ export default function Fleet() {
           {vehicles.map((v) => (
             <div
               key={v.id}
-              className="luxury-card lift-glow border-run border-run-hover group flex flex-col"
+              className="luxury-card lift-glow border-run group flex flex-col"
             >
               {/* Vehicle photo */}
               <div className="relative h-60 overflow-hidden">
@@ -115,7 +115,7 @@ export default function Fleet() {
               <div className="p-6 flex flex-col flex-1">
                 <div className="flex items-start justify-between mb-3">
                   <div>
-                    <h3 className="font-serif text-lg text-luxury-text font-semibold leading-tight">
+                    <h3 className="font-serif text-xl text-luxury-text font-semibold leading-tight">
                       {v.name}
                     </h3>
                     <p className="text-xs tracking-[0.18em] uppercase text-gold font-sans font-medium mt-0.5">
@@ -128,11 +128,11 @@ export default function Fleet() {
                 <div className="flex gap-4 mb-4">
                   <div className="flex items-center gap-1.5 text-luxury-muted">
                     <PassengerIcon />
-                    <span className="text-xs font-sans">{v.passengers} passengers</span>
+                    <span className="text-sm font-sans">{v.passengers} passengers</span>
                   </div>
                   <div className="flex items-center gap-1.5 text-luxury-muted">
                     <BaggageIcon />
-                    <span className="text-xs font-sans">{v.luggage} bags</span>
+                    <span className="text-sm font-sans">{v.luggage} bags</span>
                   </div>
                 </div>
 
@@ -151,7 +151,7 @@ export default function Fleet() {
                 {/* CTA */}
                 <div className="mt-auto">
                   <a
-                    href="#booking"
+                    href="/#booking"
                     className="block text-center py-3 text-xs tracking-[0.2em] uppercase font-sans font-semibold text-gold border border-gold/30 hover:border-gold hover:bg-gold/5 transition-all duration-300"
                   >
                     Request This Vehicle
@@ -162,7 +162,7 @@ export default function Fleet() {
           ))}
 
           {/* "View Full Fleet" card */}
-          <div className="border border-dashed border-luxury-border flex flex-col items-center justify-center p-10 text-center gap-4 min-h-[360px] group hover:border-gold/30 transition-colors duration-300 cursor-pointer">
+          <a href="/contact" className="luxury-card border-run lift-glow flex flex-col items-center justify-center p-10 text-center gap-4 min-h-[300px] group">
             <div className="w-12 h-12 border border-gold/20 group-hover:border-gold/50 flex items-center justify-center transition-colors duration-300">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" className="w-5 h-5 text-gold/50 group-hover:text-gold transition-colors duration-300">
                 <line x1="12" y1="5" x2="12" y2="19" />
@@ -175,7 +175,7 @@ export default function Fleet() {
                 Enquire about our full fleet
               </p>
             </div>
-          </div>
+          </a>
         </div>
 
       </div>

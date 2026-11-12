@@ -60,7 +60,7 @@ const services = [
 
 export default function Services() {
   return (
-    <section id="services" className="bg-luxury-dark pt-40 pb-28 px-6">
+    <section id="services" className="bg-luxury-dark pt-32 sm:pt-40 pb-20 sm:pb-28 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto">
 
         {/* Section header */}
@@ -72,17 +72,17 @@ export default function Services() {
           <h2 className="font-serif text-4xl md:text-5xl text-luxury-text font-bold">
             Our Services
           </h2>
-          <p className="mt-4 text-luxury-muted text-sm font-sans font-light max-w-md mx-auto leading-relaxed tracking-wide">
+          <p className="mt-4 text-luxury-muted text-base font-sans font-light max-w-md mx-auto leading-relaxed tracking-wide">
             Every journey is tailored to your requirements — professionally driven, impeccably presented.
           </p>
         </div>
 
         {/* Cards grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-luxury-border">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {services.map((svc) => (
             <div
               key={svc.roman}
-              className="bg-luxury-dark group hover:bg-luxury-card2 lift-glow border-run border-run-hover p-8 flex flex-col gap-5 cursor-default"
+              className="luxury-card border-run lift-glow group p-6 sm:p-8 flex flex-col gap-5 cursor-default"
             >
               {/* Icon */}
               <div className="w-14 h-14 border border-gold/20 flex items-center justify-center group-hover:border-gold/50 transition-colors duration-300">
@@ -102,7 +102,7 @@ export default function Services() {
                 <p className="text-xs tracking-[0.2em] uppercase text-gold font-sans font-medium mb-3">
                   {svc.subtitle}
                 </p>
-                <p className="text-luxury-muted text-sm font-sans font-light leading-relaxed">
+                <p className="text-luxury-muted text-base font-sans font-light leading-relaxed">
                   {svc.description}
                 </p>
               </div>

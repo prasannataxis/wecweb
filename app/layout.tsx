@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { Playfair_Display, Montserrat } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/Navbar";
-import { ThemeProvider } from "./theme/ThemeProvider";
-import { DEFAULT_ACCENT, DEFAULT_MODE, themeInitScript } from "./theme/config";
+import { WhatsAppButton } from "./components/contact-info";
+import { SettingsProvider } from "./theme/SettingsProvider";
+import { DEFAULT_SETTINGS, themeInitScript } from "./theme/config";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -33,8 +34,8 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      data-mode={DEFAULT_MODE}
-      data-accent={DEFAULT_ACCENT}
+      data-mode={DEFAULT_SETTINGS.mode}
+      data-accent={DEFAULT_SETTINGS.accent}
       className={`${playfair.variable} ${montserrat.variable}`}
       suppressHydrationWarning
     >
@@ -42,10 +43,11 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body className="font-sans antialiased bg-luxury-black text-luxury-text">
-        <ThemeProvider>
+        <SettingsProvider>
           <Navbar />
           {children}
-        </ThemeProvider>
+          <WhatsAppButton />
+        </SettingsProvider>
       </body>
     </html>
   );

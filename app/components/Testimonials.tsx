@@ -46,7 +46,7 @@ function StarRow({ count }: { count: number }) {
 
 export default function Testimonials() {
   return (
-    <section className="bg-luxury-dark py-28 px-6">
+    <section className="bg-luxury-dark py-20 sm:py-28 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto">
 
         {/* Section header */}
@@ -63,7 +63,7 @@ export default function Testimonials() {
         {/* Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {testimonials.map((t) => (
-            <div key={t.name} className="luxury-card lift-glow border-run border-run-hover p-8 flex flex-col gap-5">
+            <div key={t.name} className="luxury-card lift-glow border-run p-8 flex flex-col gap-5">
               {/* Stars */}
               <StarRow count={t.rating} />
 
@@ -71,7 +71,7 @@ export default function Testimonials() {
               <div className="font-serif text-5xl text-gold/20 leading-none select-none -mt-2">&ldquo;</div>
 
               {/* Quote */}
-              <p className="text-luxury-text text-sm font-sans font-light leading-relaxed -mt-4">
+              <p className="text-luxury-text text-base font-sans font-light leading-relaxed -mt-4">
                 {t.quote}
               </p>
 
@@ -95,7 +95,7 @@ export default function Testimonials() {
 
         {/* Google rating badge */}
         <div className="mt-12 flex justify-center">
-          <div className="flex items-center gap-4 px-8 py-4 border border-luxury-border">
+          <div className="luxury-card border-run flex items-center gap-4 px-8 py-4">
             <div className="flex flex-col items-center">
               <div className="font-serif text-3xl gold-text font-bold">5.0</div>
               <StarRow count={5} />
