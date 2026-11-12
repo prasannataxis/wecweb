@@ -1,11 +1,5 @@
-export const CONTACT = {
-  phoneDisplay: "+44 (0) 7700 000000",
-  phoneHref: "tel:+447700000000",
-  email: "info@wimbledonlimousines.co.uk",
-  whatsappHref: "https://wa.me/447700000000",
-  base: "Wimbledon, London SW19",
-  areas: ["London", "Surrey", "Kent", "Essex", "Hertfordshire", "Berkshire"],
-};
+"use client";
+import { useBusiness } from "../theme/SettingsProvider";
 
 export function WhatsAppIcon({ className = "w-6 h-6" }: { className?: string }) {
   return (
@@ -16,9 +10,10 @@ export function WhatsAppIcon({ className = "w-6 h-6" }: { className?: string }) 
 }
 
 export function WhatsAppButton() {
+  const { whatsappHref } = useBusiness();
   return (
     <a
-      href={CONTACT.whatsappHref}
+      href={whatsappHref}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat with us on WhatsApp"

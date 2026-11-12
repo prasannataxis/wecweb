@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
-import { CONTACT, WhatsAppIcon } from "./contact-info";
+import { WhatsAppIcon } from "./contact-info";
+import { useBusiness } from "../theme/SettingsProvider";
 
 const fieldClass =
   "w-full bg-luxury-black/60 border border-luxury-border text-luxury-text text-base font-sans px-4 py-3 outline-none transition-all focus:border-gold/60";
@@ -23,13 +24,15 @@ function MailIcon() {
   );
 }
 
-const methods = [
-  { title: "Call Us", value: CONTACT.phoneDisplay, href: CONTACT.phoneHref, note: "24 hours a day, 7 days a week", icon: <PhoneIcon /> },
-  { title: "WhatsApp", value: "Message us instantly", href: CONTACT.whatsappHref, note: "Fastest way to get a quote", icon: <WhatsAppIcon className="w-6 h-6" />, external: true },
-  { title: "Email", value: CONTACT.email, href: `mailto:${CONTACT.email}`, note: "We reply within the hour", icon: <MailIcon /> },
-];
 
 export default function Contact() {
+  const b = useBusiness();
+  const methods = [
+    { title: "Call Us", value: b.phone, href: b.phoneHref, note: "24 hours a day, 7 days a week", icon: <PhoneIcon /> },
+    { title: "WhatsApp", value: "Message us instantly", href: b.whatsappHref, note: "Fastest way to get a quote", icon: <WhatsAppIcon className="w-6 h-6" />, external: true },
+    { title: "Email", value: b.email, href: `mailto:${b.email}`, note: "We reply within the hour", icon: <MailIcon /> },
+  ];
+
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -38,7 +41,7 @@ export default function Contact() {
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     const body = `Name: ${form.name}\nEmail: ${form.email}\nPhone: ${form.phone}\n\n${form.message}`;
-    window.location.href = `mailto:${CONTACT.email}?subject=${encodeURIComponent("Chauffeur enquiry")}&body=${encodeURIComponent(body)}`;
+    window.location.href = `mailto:${b.email}?subject=${encodeURIComponent("Chauffeur enquiry")}&body=${encodeURIComponent(body)}`;
   };
 
   return (
@@ -101,11 +104,11 @@ export default function Contact() {
             <div>
               <h3 className="font-serif text-2xl text-luxury-text font-semibold mb-2">Coverage</h3>
               <p className="text-base text-luxury-muted font-sans font-light leading-relaxed">
-                Based in {CONTACT.base}. We serve all of Greater London and the South East of England.
+                Based in {b.base}. We serve all of Greater London and the South East of England.
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
-              {CONTACT.areas.map((area) => (
+              {b.areaList.map((area) => (
                 <span key={area} className="text-xs tracking-[0.12em] uppercase px-3 py-1.5 border border-gold/30 text-luxury-text/80 font-sans">
                   {area}
                 </span>

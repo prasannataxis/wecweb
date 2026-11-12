@@ -160,18 +160,20 @@ export default function Hero() {
           />
         ))}
         <div className="home-overlay" />
+        <div className="home-fx">
         <div className="home-glow" />
         <div className="hero-grid" />
         {streaks.map((s, i) => (
-          <span key={i} className="light-streak" style={{ top: `${s.top}%`, animationDelay: `${s.delay}s`, animationDuration: `${s.duration}s` }} />
+          <span key={i} className="light-streak" style={{ top: `${s.top}%`, animationDelay: `${s.delay}s`, ["--d" as string]: `${s.duration}s` }} />
         ))}
         {particles.map((p, i) => (
           <span
             key={i}
             className="particle"
-            style={{ left: `${p.left}%`, width: p.size, height: p.size, animationDuration: `${p.duration}s`, animationDelay: `${p.delay}s` }}
+            style={{ left: `${p.left}%`, ["--s" as string]: `${p.size}px`, ["--d" as string]: `${p.duration}s`, animationDelay: `${p.delay}s` }}
           />
         ))}
+        </div>
       </div>
       <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-luxury-black to-transparent pointer-events-none" aria-hidden />
 

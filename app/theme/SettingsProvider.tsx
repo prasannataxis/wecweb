@@ -1,20 +1,33 @@
 "use client";
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { DEFAULT_SETTINGS, Settings, SETTINGS_KEY } from "./config";
+import { animationVars, DEFAULT_SETTINGS, mergeSettings, Settings, SETTINGS_KEY } from "./config";
+
+type Patch = Partial<Omit<Settings, "edge" | "intro" | "business">> & {
+  edge?: Partial<Settings["edge"]>;
+  intro?: Partial<Settings["intro"]>;
+  business?: Partial<Settings["business"]>;
+};
 
 type SettingsContextValue = {
   settings: Settings;
   loaded: boolean;
-  update: (patch: Partial<Settings>) => void;
-  reset: () => void;
+  update: (patch: Patch) => void;
+  reset: (section?: "look" | "business") => void;
 };
 
 const SettingsContext = createContext<SettingsContextValue | null>(null);
 
 function apply(s: Settings) {
-  const d = document.documentElement.dataset;
-  d.mode = s.mode;
-  d.accent = s.accent;
+  const root = document.documentElement;
+  root.dataset.mode = s.mode;
+  root.dataset.accent = s.accent;
+  const vars = animationVars(s);
+  for (const k in vars) root.style.setProperty(k, vars[k]);
+}
+
+function save(s: Settings) {
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+  apply(s);
 }
 
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
@@ -24,24 +37,34 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     try {
       const raw = localStorage.getItem(SETTINGS_KEY);
-      if (raw) setSettings({ ...DEFAULT_SETTINGS, ...JSON.parse(raw) });
+      if (raw) setSettings(mergeSettings(DEFAULT_SETTINGS, JSON.parse(raw)));
     } catch {}
     setLoaded(true);
   }, []);
 
-  const update = useCallback((patch: Partial<Settings>) => {
+  const update = useCallback((patch: Patch) => {
     setSettings((prev) => {
-      const next = { ...prev, ...patch };
-      localStorage.setItem(SETTINGS_KEY, JSON.stringify(next));
-      apply(next);
+      const next: Settings = {
+        ...prev,
+        ...patch,
+        edge: { ...prev.edge, ...patch.edge },
+        intro: { ...prev.intro, ...patch.intro },
+        business: { ...prev.business, ...patch.business },
+      };
+      save(next);
       return next;
     });
   }, []);
 
-  const reset = useCallback(() => {
-    localStorage.removeItem(SETTINGS_KEY);
-    setSettings(DEFAULT_SETTINGS);
-    apply(DEFAULT_SETTINGS);
+  const reset = useCallback((section?: "look" | "business") => {
+    setSettings((prev) => {
+      const next: Settings =
+        section === "business" ? { ...prev, business: DEFAULT_SETTINGS.business }
+        : section === "look" ? { ...DEFAULT_SETTINGS, business: prev.business }
+        : DEFAULT_SETTINGS;
+      save(next);
+      return next;
+    });
   }, []);
 
   return (
@@ -55,4 +78,14 @@ export function useSettings() {
   const ctx = useContext(SettingsContext);
   if (!ctx) throw new Error("useSettings must be used inside SettingsProvider");
   return ctx;
+}
+
+export function useBusiness() {
+  const b = useSettings().settings.business;
+  return {
+    ...b,
+    phoneHref: `tel:${b.phone.replace(/[^\d+]/g, "").replace(/^\+440/, "+44")}`,
+    whatsappHref: `https://wa.me/${b.whatsapp.replace(/\D/g, "")}`,
+    areaList: b.areas.split(",").map((a) => a.trim()).filter(Boolean),
+  };
 }
