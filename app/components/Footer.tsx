@@ -41,7 +41,7 @@ export default function Footer() {
               <span className="w-10 h-10 border border-gold/30 flex items-center justify-center"><CrownLogo size={24} /></span>
               <span className="flex flex-col gap-1 leading-none">
                 <span className="text-sm tracking-[0.4em] text-luxury-text font-serif font-semibold uppercase">Wimbledon</span>
-                <span className="text-[11px] tracking-[0.45em] text-gold font-sans font-medium uppercase">Limousines</span>
+                <span className="text-[11px] tracking-[0.2em] text-gold font-sans font-medium uppercase">Executive Chauffeurs</span>
               </span>
             </Link>
             <p className="text-luxury-muted text-sm font-sans font-light leading-relaxed max-w-xs">

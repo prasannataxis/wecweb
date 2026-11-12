@@ -44,6 +44,7 @@ function shouldSkipIntro(s: Settings) {
 
 export default function Hero() {
   const { settings, loaded } = useSettings();
+  const { slogan1, slogan2 } = settings.business;
   const [phase, setPhaseState] = useState<Phase>("playing");
   const [current, setCurrent] = useState(0);
   const [finePointer, setFinePointer] = useState<boolean | null>(null);
@@ -149,7 +150,7 @@ export default function Hero() {
     settings.touchReveal === "tap" ? "Tap anywhere to begin" : "";
 
   return (
-    <section id="home" className="home-stage" aria-label="Wimbledon Limousines">
+    <section id="home" className="home-stage" aria-label="Wimbledon Executive Chauffeurs">
       {/* Background */}
       <div className="home-bg" aria-hidden>
         {slides.map((slide, i) => (
@@ -190,7 +191,7 @@ export default function Hero() {
           ))}
         </h1>
         <span className="intro-rule" />
-        <p className="intro-sub font-sans font-medium text-gold uppercase">Limousines</p>
+        <p className="intro-sub font-sans font-medium text-gold uppercase">Executive Chauffeurs</p>
         {hint && <p className="intro-hint font-sans text-luxury-text/80 uppercase">{hint}</p>}
         <p className="intro-car font-sans text-gold/80 uppercase">{slides[current].name}</p>
       </div>
@@ -206,8 +207,8 @@ export default function Hero() {
         </div>
 
         <h2 className="rv rv-2 font-serif leading-[0.95] text-center select-none">
-          <span className="home-h1-a block text-luxury-text font-bold tracking-tight">Arrive With</span>
-          <span className="home-h1-b block gold-text font-bold italic tracking-tight px-3 pb-1">Distinction</span>
+          <span className="home-h1-a block text-luxury-text font-bold tracking-tight">{slogan1}</span>
+          <span className="home-h1-b block gold-text headline-fx font-bold italic tracking-tight px-3 pb-1">{slogan2}</span>
         </h2>
 
         <p className="rv rv-3 home-tagline text-luxury-text/85 text-base md:text-lg font-sans font-light max-w-xl text-center leading-relaxed">

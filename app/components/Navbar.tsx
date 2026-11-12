@@ -52,12 +52,12 @@ export function Logo() {
         <CrownLogo />
       </div>
       <div className="flex flex-col gap-1 leading-none">
-        <span className="text-sm sm:text-base tracking-[0.3em] sm:tracking-[0.4em] text-luxury-text font-serif font-semibold uppercase">
+        <span className="text-sm sm:text-base tracking-[0.45em] text-luxury-text font-serif font-semibold uppercase">
           Wimbledon
         </span>
         <span className="block h-px w-full bg-gradient-to-r from-transparent via-gold/60 to-transparent" />
-        <span className="text-[11px] sm:text-xs tracking-[0.42em] sm:tracking-[0.5em] text-gold font-sans font-medium uppercase">
-          Limousines
+        <span className="text-[11px] sm:text-xs tracking-[0.18em] sm:tracking-[0.22em] text-gold font-sans font-medium uppercase whitespace-nowrap">
+          Executive Chauffeurs
         </span>
       </div>
     </Link>
@@ -107,12 +107,12 @@ export default function Navbar() {
       <div className={`max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between transition-all duration-500 ${scrolled ? "py-3 sm:py-4" : "py-4 sm:py-5"}`}>
         <Logo />
 
-        <nav className="hidden lg:flex items-center gap-8 xl:gap-10">
+        <nav className="hidden lg:flex items-center gap-5 xl:gap-9">
           {navLinks.map((link) => (
             <Link
               key={link.label}
               href={link.href}
-              className={`nav-link text-sm tracking-[0.15em] uppercase font-sans font-medium transition-colors duration-200 ${
+              className={`nav-link text-sm tracking-[0.1em] xl:tracking-[0.15em] uppercase whitespace-nowrap font-sans font-medium transition-colors duration-200 ${
                 pathname === link.href ? "active text-gold" : "text-luxury-text/85 hover:text-gold"
               }`}
             >
@@ -121,12 +121,12 @@ export default function Navbar() {
           ))}
         </nav>
 
-        <div className="hidden lg:flex items-center gap-3">
+        <div className="hidden lg:flex items-center gap-2 xl:gap-3">
           <AdminLink active={pathname === "/admin"} />
           <Link
             href="/#booking"
             onClick={() => window.dispatchEvent(new Event("wl:book"))}
-            className="neon-pulse inline-block px-6 py-2.5 text-sm tracking-[0.15em] uppercase font-sans font-semibold text-gold border border-gold/60 hover:bg-gold hover:text-on-accent transition-colors duration-300"
+            className="neon-pulse inline-block whitespace-nowrap px-5 xl:px-6 py-2.5 text-sm tracking-[0.12em] xl:tracking-[0.15em] uppercase font-sans font-semibold text-gold border border-gold/60 hover:bg-gold hover:text-on-accent transition-colors duration-300"
           >
             Book Now
           </Link>

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import AdminPanel from "./AdminPanel";
 
 export const metadata: Metadata = {
-  title: "Site Settings | Wimbledon Limousines",
+  title: "Site Settings | Wimbledon Executive Chauffeurs",
   robots: { index: false, follow: false },
 };
 

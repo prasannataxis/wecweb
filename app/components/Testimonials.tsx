@@ -4,7 +4,7 @@ const testimonials = [
     role: "Managing Director, Hartington Capital",
     rating: 5,
     quote:
-      "I use Wimbledon Limousines for all my client airport runs. The chauffeurs are punctual, professional, and discreet. Exactly what you need when travelling with high-value guests.",
+      "I use Wimbledon Executive Chauffeurs for all my client airport runs. The chauffeurs are punctual, professional, and discreet. Exactly what you need when travelling with high-value guests.",
     initials: "JH",
   },
   {

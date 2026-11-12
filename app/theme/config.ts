@@ -18,6 +18,24 @@ export type IntroFxSettings = {
   intensity: number; // 0–100
 };
 
+export type HeadlineSettings = {
+  motion: Motion; // shimmer sweep across the highlighted line
+  speed: number;
+  intensity: number; // 0–100, how bright the shimmer highlight is
+  entrance: number; // multiplier for the fade-up entrance speed
+};
+
+export type NavEdgeSettings = {
+  motion: Motion;
+  speed: number;
+  width: number; // px
+  intensity: number; // 0–100
+};
+
+export type CardSettings = {
+  tint: number; // 0–100, strength of the per-card colour wash
+};
+
 export type Business = {
   companyName: string;
   companyNumber: string;
@@ -28,6 +46,8 @@ export type Business = {
   whatsapp: string; // international digits, e.g. 447700000000
   base: string;
   areas: string; // comma separated
+  slogan1: string;
+  slogan2: string; // highlighted line
 };
 
 export type Settings = {
@@ -37,6 +57,9 @@ export type Settings = {
   introReturn: IntroReturn;
   edge: EdgeSettings;
   intro: IntroFxSettings;
+  headline: HeadlineSettings;
+  navEdge: NavEdgeSettings;
+  cards: CardSettings;
   business: Business;
 };
 
@@ -55,8 +78,11 @@ export const DEFAULT_SETTINGS: Settings = {
   introReturn: "once",
   edge: { idle: "slow", hover: "fast", speed: 1, width: 1.5, intensity: 60 },
   intro: { speed: 0.7, size: 1, intensity: 55 },
+  headline: { motion: "slow", speed: 1, intensity: 70, entrance: 1 },
+  navEdge: { motion: "slow", speed: 1, width: 1.5, intensity: 70 },
+  cards: { tint: 30 },
   business: {
-    companyName: "Wimbledon Limousines Ltd",
+    companyName: "Wimbledon Executive Chauffeurs Ltd",
     companyNumber: "00000000",
     vatNumber: "GB 000 0000 00",
     registeredAddress: "Registered office address, Wimbledon, London SW19",
@@ -65,8 +91,19 @@ export const DEFAULT_SETTINGS: Settings = {
     whatsapp: "447700000000",
     base: "Wimbledon, London SW19",
     areas: "London, Surrey, Kent, Essex, Hertfordshire, Berkshire",
+    slogan1: "Arrive With",
+    slogan2: "Distinction",
   },
 };
+
+export const SLOGAN_PRESETS: { line1: string; line2: string }[] = [
+  { line1: "Arrive With", line2: "Distinction" },
+  { line1: "Travel In", line2: "Elegance" },
+  { line1: "Driven By", line2: "Excellence" },
+  { line1: "The Art of", line2: "Arrival" },
+  { line1: "Your Journey,", line2: "Perfected" },
+  { line1: "London's Finest", line2: "Chauffeurs" },
+];
 
 export const AUTO_REVEAL_MS = 3500;
 export const IDLE_RETURN_MS = 12000;
@@ -96,19 +133,28 @@ export function mergeSettings(defaults: Settings, saved: Record<string, unknown>
 }
 
 export function animationVars(s: Settings): Record<string, string> {
-  const base = 6 / Math.max(0.1, s.edge.speed);
-  const dur = (m: string) => (m === "slow" ? base * 2 : m === "fast" ? base * 0.5 : base) + "s";
+  const dur = (base: number, speed: number, m: string) =>
+    (base / Math.max(0.1, speed)) * (m === "slow" ? 2 : m === "fast" ? 0.5 : 1) + "s";
   const play = (m: string) => (m === "static" ? "paused" : "running");
   return {
     "--edge-width": s.edge.width + "px",
     "--edge-alpha": String(s.edge.intensity / 100),
-    "--edge-dur-idle": dur(s.edge.idle),
-    "--edge-dur-hover": dur(s.edge.hover),
+    "--edge-dur-idle": dur(6, s.edge.speed, s.edge.idle),
+    "--edge-dur-hover": dur(6, s.edge.speed, s.edge.hover),
     "--edge-play-idle": play(s.edge.idle),
     "--edge-play-hover": play(s.edge.hover),
     "--intro-time": String(1 / Math.max(0.1, s.intro.speed)),
     "--intro-size": String(s.intro.size),
     "--intro-alpha": String(s.intro.intensity / 100),
+    "--hl-dur": dur(4, s.headline.speed, s.headline.motion),
+    "--hl-play": play(s.headline.motion),
+    "--hl-pct": s.headline.intensity + "%",
+    "--entrance-time": String(1 / Math.max(0.1, s.headline.entrance)),
+    "--nav-dur": dur(2, s.navEdge.speed, s.navEdge.motion),
+    "--nav-play": play(s.navEdge.motion),
+    "--nav-h": s.navEdge.width + "px",
+    "--nav-alpha": String(s.navEdge.intensity / 100),
+    "--tint-alpha": String((s.cards.tint / 100) * 0.4),
   };
 }
 

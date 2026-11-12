@@ -5,7 +5,6 @@ const events = [
     location: "SW19, Wimbledon",
     dates: "23 Jun – 6 Jul 2025",
     tag: "Tennis",
-    accent: "rgba(34,197,94,0.12)",
   },
   {
     name: "Royal Ascot",
@@ -13,7 +12,6 @@ const events = [
     location: "Ascot, Berkshire",
     dates: "17 – 21 Jun 2025",
     tag: "Horse Racing",
-    accent: "rgba(239,68,68,0.12)",
   },
   {
     name: "Wembley Stadium",
@@ -21,7 +19,6 @@ const events = [
     location: "Wembley, London",
     dates: "Year-round events",
     tag: "Stadium",
-    accent: "rgba(99,102,241,0.12)",
   },
   {
     name: "The O2 Arena",
@@ -29,7 +26,6 @@ const events = [
     location: "Greenwich Peninsula",
     dates: "Year-round events",
     tag: "Arena",
-    accent: "rgba(59,130,246,0.12)",
   },
   {
     name: "Twickenham Stadium",
@@ -37,7 +33,6 @@ const events = [
     location: "Twickenham, London",
     dates: "Six Nations & more",
     tag: "Rugby",
-    accent: "rgba(245,158,11,0.10)",
   },
   {
     name: "Chelsea Flower Show",
@@ -45,7 +40,6 @@ const events = [
     location: "Chelsea, London",
     dates: "19 – 23 May 2025",
     tag: "Garden Show",
-    accent: "rgba(16,185,129,0.10)",
   },
 ];
 
@@ -76,13 +70,7 @@ export default function LondonEvents() {
               className="group luxury-card border-run lift-glow"
               
             >
-              {/* Accent glow */}
-              <div
-                className="absolute inset-0 pointer-events-none"
-                style={{ background: `radial-gradient(ellipse at top left, ${ev.accent}, transparent 70%)` }}
-              />
-
-              <div className="relative p-6 flex flex-col gap-4">
+              <div className="p-6 flex flex-col gap-4">
                 {/* Tag + Date row */}
                 <div className="flex items-center justify-between">
                   <span className="text-xs tracking-[0.25em] uppercase text-gold/70 font-sans font-medium border border-gold/20 px-2.5 py-1">

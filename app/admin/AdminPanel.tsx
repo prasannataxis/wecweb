@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useSettings } from "../theme/SettingsProvider";
-import { ACCENTS, AUTO_REVEAL_MS, Business, IDLE_RETURN_MS, INTRO_SEEN_KEY, Motion, Settings } from "../theme/config";
+import { ACCENTS, AUTO_REVEAL_MS, Business, IDLE_RETURN_MS, INTRO_SEEN_KEY, Motion, Settings, SLOGAN_PRESETS } from "../theme/config";
 
 type Option<V> = { value: V; label: string; description: string };
 
@@ -108,7 +108,7 @@ const percent = (v: number) => `${v}%`;
 
 function LookTab() {
   const { settings, update, reset } = useSettings();
-  const { edge, intro } = settings;
+  const { edge, intro, headline, navEdge, cards } = settings;
 
   return (
     <div className="flex flex-col gap-8">
@@ -168,6 +168,46 @@ function LookTab() {
         </div>
       </Panel>
 
+      <Panel title="Card Colours" subtitle="The colour wash on every card, each card in its own hue like the Events page.">
+        <div className="grid sm:grid-cols-2 gap-6 items-center">
+          <Slider label="Colour intensity" value={cards.tint} min={0} max={100} step={5} format={percent} onChange={(tint) => update({ cards: { tint } })} />
+          <div className="grid grid-cols-3 gap-3">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="luxury-card h-16" />
+            ))}
+          </div>
+        </div>
+      </Panel>
+
+      <Panel title="Home Headline" subtitle={`The "${settings.business.slogan1} ${settings.business.slogan2}" headline on the booking view.`}>
+        <div className="grid gap-8">
+          <div>
+            <h3 className={sectionLabel}>Shimmer</h3>
+            <Choice compact name="hlMotion" options={motionOptions} value={headline.motion} onChange={(motion) => update({ headline: { motion } })} />
+          </div>
+          <div className="grid sm:grid-cols-3 gap-6">
+            <Slider label="Shimmer speed" value={headline.speed} min={0.25} max={2} step={0.05} format={times} onChange={(speed) => update({ headline: { speed } })} />
+            <Slider label="Shimmer strength" value={headline.intensity} min={0} max={100} step={5} format={percent} onChange={(intensity) => update({ headline: { intensity } })} />
+            <Slider label="Entrance speed" value={headline.entrance} min={0.25} max={2} step={0.05} format={times} onChange={(entrance) => update({ headline: { entrance } })} />
+          </div>
+          <p className="font-serif text-4xl sm:text-5xl font-bold italic text-center gold-text headline-fx py-2">{settings.business.slogan2}</p>
+        </div>
+      </Panel>
+
+      <Panel title="Header Edge" subtitle="The glowing line under the top menu (also used above the footer).">
+        <div className="grid gap-8">
+          <div>
+            <h3 className={sectionLabel}>Motion</h3>
+            <Choice compact name="navMotion" options={motionOptions} value={navEdge.motion} onChange={(motion) => update({ navEdge: { motion } })} />
+          </div>
+          <div className="grid sm:grid-cols-3 gap-6">
+            <Slider label="Speed" value={navEdge.speed} min={0.25} max={2} step={0.05} format={times} onChange={(speed) => update({ navEdge: { speed } })} />
+            <Slider label="Thickness" value={navEdge.width} min={1} max={5} step={0.5} format={(v) => `${v}px`} onChange={(width) => update({ navEdge: { width } })} />
+            <Slider label="Intensity" value={navEdge.intensity} min={0} max={100} step={5} format={percent} onChange={(intensity) => update({ navEdge: { intensity } })} />
+          </div>
+        </div>
+      </Panel>
+
       <Panel title="Home Intro Background" subtitle="Photo zoom, light streaks, glowing particles and the centre glow behind the logo.">
         <div className="grid sm:grid-cols-3 gap-6">
           <Slider label="Speed" value={intro.speed} min={0.25} max={2} step={0.05} format={times} onChange={(speed) => update({ intro: { speed } })} />
@@ -204,12 +244,64 @@ function LookTab() {
   );
 }
 
+function SloganPicker() {
+  const { settings, update } = useSettings();
+  const { slogan1, slogan2 } = settings.business;
+  const presetIndex = SLOGAN_PRESETS.findIndex((p) => p.line1 === slogan1 && p.line2 === slogan2);
+  const [custom, setCustom] = useState(presetIndex === -1);
+  const optionClass = (active: boolean) =>
+    `p-4 border text-left transition-colors ${active ? "border-gold bg-gold/10" : "border-luxury-border hover:border-gold/50"}`;
+
+  return (
+    <div className="grid gap-5">
+      <div className="grid sm:grid-cols-2 gap-3" role="radiogroup">
+        {SLOGAN_PRESETS.map((p, i) => (
+          <button
+            key={i}
+            type="button"
+            role="radio"
+            aria-checked={!custom && presetIndex === i}
+            onClick={() => { setCustom(false); update({ business: { slogan1: p.line1, slogan2: p.line2 } }); }}
+            className={optionClass(!custom && presetIndex === i)}
+          >
+            <span className="font-serif text-lg text-luxury-text">{p.line1} </span>
+            <span className="font-serif text-lg italic text-gold">{p.line2}</span>
+          </button>
+        ))}
+        <button type="button" role="radio" aria-checked={custom} onClick={() => setCustom(true)} className={`${optionClass(custom)} sm:col-span-2`}>
+          <span className="font-sans text-base font-semibold text-luxury-text">Custom slogan</span>
+          <span className="block text-sm text-luxury-muted font-sans mt-1">Write your own two lines</span>
+        </button>
+      </div>
+      {custom && (
+        <div className="grid sm:grid-cols-2 gap-4">
+          {([["slogan1", "First line"], ["slogan2", "Highlighted line"]] as const).map(([key, label]) => (
+            <label key={key} className="flex flex-col gap-2">
+              <span className="text-xs tracking-[0.2em] uppercase text-gold font-sans font-semibold">{label}</span>
+              <input
+                value={settings.business[key]}
+                maxLength={28}
+                onChange={(e) => update({ business: { [key]: e.target.value } })}
+                className="w-full bg-luxury-black/60 border border-luxury-border text-luxury-text text-base font-sans px-4 py-3 outline-none focus:border-gold/60"
+              />
+            </label>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function BusinessTab() {
   const { settings, update, reset } = useSettings();
   const b = settings.business;
 
   return (
     <div className="flex flex-col gap-8">
+      <Panel title="Slogan" subtitle="The two-line headline on the home page. The second line is highlighted.">
+        <SloganPicker />
+      </Panel>
+
       <Panel title="Business Details" subtitle="Shown in the footer and on the Contact page. Saved as you type.">
         <div className="grid sm:grid-cols-2 gap-5">
           {businessFields.map((f) => (

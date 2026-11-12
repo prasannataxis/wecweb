@@ -22,7 +22,7 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "Wimbledon Limousines | Arrive with Distinction",
+  title: "Wimbledon Executive Chauffeurs | Luxury Chauffeur Service London",
   description: "London's premier luxury chauffeur service. Executive airport transfers, corporate accounts, event chauffeur and wedding hire.",
 };
 

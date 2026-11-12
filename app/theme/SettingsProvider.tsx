@@ -2,10 +2,8 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { animationVars, DEFAULT_SETTINGS, mergeSettings, Settings, SETTINGS_KEY } from "./config";
 
-type Patch = Partial<Omit<Settings, "edge" | "intro" | "business">> & {
-  edge?: Partial<Settings["edge"]>;
-  intro?: Partial<Settings["intro"]>;
-  business?: Partial<Settings["business"]>;
+type Patch = {
+  [K in keyof Settings]?: Settings[K] extends object ? Partial<Settings[K]> : Settings[K];
 };
 
 type SettingsContextValue = {
@@ -44,15 +42,14 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
   const update = useCallback((patch: Patch) => {
     setSettings((prev) => {
-      const next: Settings = {
-        ...prev,
-        ...patch,
-        edge: { ...prev.edge, ...patch.edge },
-        intro: { ...prev.intro, ...patch.intro },
-        business: { ...prev.business, ...patch.business },
-      };
-      save(next);
-      return next;
+      const next = { ...prev } as Record<string, unknown>;
+      const p = patch as Record<string, unknown>;
+      for (const k in p) {
+        const cur = next[k];
+        next[k] = cur && typeof cur === "object" ? { ...(cur as object), ...(p[k] as object) } : p[k];
+      }
+      save(next as Settings);
+      return next as Settings;
     });
   }, []);
 
