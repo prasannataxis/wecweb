@@ -72,7 +72,7 @@ function BaggageIcon() {
 
 export default function Fleet() {
   return (
-    <section id="fleet" className="bg-luxury-black py-28 px-6">
+    <section id="fleet" className="bg-luxury-black pt-40 pb-28 px-6">
       <div className="max-w-7xl mx-auto">
 
         {/* Section header */}
@@ -94,7 +94,7 @@ export default function Fleet() {
           {vehicles.map((v) => (
             <div
               key={v.id}
-              className="luxury-card group flex flex-col overflow-hidden"
+              className="luxury-card lift-glow border-run border-run-hover group flex flex-col"
             >
               {/* Vehicle photo */}
               <div className="relative h-60 overflow-hidden">
@@ -105,7 +105,7 @@ export default function Fleet() {
                   style={{ objectPosition: v.imgPosition }}
                 />
                 {/* Subtle dark gradient at bottom for card content bleed */}
-                <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#111] to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-luxury-card to-transparent" />
                 {/* Corner accents */}
                 <div className="absolute top-3 left-3 w-5 h-5 border-t border-l border-gold/40" />
                 <div className="absolute top-3 right-3 w-5 h-5 border-t border-r border-gold/40" />
@@ -141,7 +141,7 @@ export default function Fleet() {
                   {v.features.map((f) => (
                     <span
                       key={f}
-                      className="text-[11px] tracking-[0.12em] uppercase px-2.5 py-1 border border-luxury-border text-luxury-subtle font-sans"
+                      className="text-xs tracking-[0.12em] uppercase px-2.5 py-1 border border-luxury-border text-luxury-subtle font-sans"
                     >
                       {f}
                     </span>

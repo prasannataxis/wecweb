@@ -60,13 +60,13 @@ const services = [
 
 export default function Services() {
   return (
-    <section id="services" className="bg-luxury-dark py-28 px-6">
+    <section id="services" className="bg-luxury-dark pt-40 pb-28 px-6">
       <div className="max-w-7xl mx-auto">
 
         {/* Section header */}
         <div className="text-center mb-16">
           <div className="gold-divider mb-6" />
-          <p className="text-[10px] tracking-[0.4em] uppercase text-gold font-sans font-medium mb-4">
+          <p className="text-xs tracking-[0.4em] uppercase text-gold font-sans font-medium mb-4">
             What We Offer
           </p>
           <h2 className="font-serif text-4xl md:text-5xl text-luxury-text font-bold">
@@ -82,7 +82,7 @@ export default function Services() {
           {services.map((svc) => (
             <div
               key={svc.roman}
-              className="bg-luxury-dark group hover:bg-luxury-card2 transition-colors duration-300 p-8 flex flex-col gap-5 cursor-default"
+              className="bg-luxury-dark group hover:bg-luxury-card2 lift-glow border-run border-run-hover p-8 flex flex-col gap-5 cursor-default"
             >
               {/* Icon */}
               <div className="w-14 h-14 border border-gold/20 flex items-center justify-center group-hover:border-gold/50 transition-colors duration-300">
@@ -90,7 +90,7 @@ export default function Services() {
               </div>
 
               {/* Roman numeral */}
-              <div className="text-[10px] tracking-[0.3em] uppercase text-gold/40 font-serif font-semibold">
+              <div className="text-xs tracking-[0.3em] uppercase text-gold/40 font-serif font-semibold">
                 {svc.roman}
               </div>
 
@@ -99,7 +99,7 @@ export default function Services() {
                 <h3 className="font-serif text-xl text-luxury-text font-semibold mb-1">
                   {svc.title}
                 </h3>
-                <p className="text-[10px] tracking-[0.2em] uppercase text-gold font-sans font-medium mb-3">
+                <p className="text-xs tracking-[0.2em] uppercase text-gold font-sans font-medium mb-3">
                   {svc.subtitle}
                 </p>
                 <p className="text-luxury-muted text-sm font-sans font-light leading-relaxed">
@@ -109,7 +109,7 @@ export default function Services() {
 
               {/* Detail tag */}
               <div className="mt-auto pt-4 border-t border-luxury-border">
-                <p className="text-[10px] text-luxury-subtle font-sans tracking-wide leading-relaxed">
+                <p className="text-xs text-luxury-subtle font-sans tracking-wide leading-relaxed">
                   {svc.detail}
                 </p>
               </div>

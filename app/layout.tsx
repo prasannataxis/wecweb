@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Montserrat } from "next/font/google";
 import "./globals.css";
-import BackToIndex from "./components/BackToIndex";
+import Navbar from "./components/Navbar";
+import { ThemeProvider } from "./theme/ThemeProvider";
+import { DEFAULT_ACCENT, DEFAULT_MODE, themeInitScript } from "./theme/config";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-playfair",
   weight: ["400", "500", "600", "700", "800", "900"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
@@ -28,10 +31,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${playfair.variable} ${montserrat.variable}`}>
+    <html
+      lang="en"
+      data-mode={DEFAULT_MODE}
+      data-accent={DEFAULT_ACCENT}
+      className={`${playfair.variable} ${montserrat.variable}`}
+      suppressHydrationWarning
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body className="font-sans antialiased bg-luxury-black text-luxury-text">
-        <BackToIndex />
-        {children}
+        <ThemeProvider>
+          <Navbar />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

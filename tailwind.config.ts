@@ -1,5 +1,7 @@
 import type { Config } from "tailwindcss";
 
+const v = (name: string) => `rgb(var(--${name}) / <alpha-value>)`;
+
 const config: Config = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -10,21 +12,21 @@ const config: Config = {
     extend: {
       colors: {
         gold: {
-          DEFAULT: "#C4A44A",
-          light: "#CEAB5A",
-          dark: "#9A7820",
-          muted: "#6B5420",
-          pale: "#E8D398",
+          DEFAULT: v("accent"),
+          light: v("accent-light"),
+          dark: v("accent-dark"),
+          pale: v("accent-pale"),
         },
+        "on-accent": v("on-accent"),
         luxury: {
-          black: "#080808",
-          dark: "#111111",
-          card: "#161616",
-          card2: "#1C1C1C",
-          border: "#2A2520",
-          text: "#F5F0E8",
-          muted: "#9A9086",
-          subtle: "#4A453E",
+          black: v("bg"),
+          dark: v("bg-2"),
+          card: v("card"),
+          card2: v("card-2"),
+          border: v("border"),
+          text: v("text"),
+          muted: v("muted"),
+          subtle: v("subtle"),
         },
       },
       fontFamily: {
@@ -32,27 +34,8 @@ const config: Config = {
         sans: ["var(--font-montserrat)", "system-ui", "sans-serif"],
       },
       backgroundImage: {
-        "gold-gradient": "linear-gradient(135deg, #9A7820 0%, #C4A44A 35%, #CEAB5A 50%, #C4A44A 65%, #9A7820 100%)",
-        "gold-shimmer": "linear-gradient(90deg, #9A7820 0%, #C4A44A 25%, #CEAB5A 50%, #C4A44A 75%, #9A7820 100%)",
-      },
-      animation: {
-        shimmer: "shimmer 4s linear infinite",
-        "fade-up": "fadeUp 0.8s ease-out forwards",
-        "fade-in": "fadeIn 1s ease-out forwards",
-      },
-      keyframes: {
-        shimmer: {
-          "0%": { backgroundPosition: "0% center" },
-          "100%": { backgroundPosition: "200% center" },
-        },
-        fadeUp: {
-          "0%": { opacity: "0", transform: "translateY(24px)" },
-          "100%": { opacity: "1", transform: "translateY(0)" },
-        },
-        fadeIn: {
-          "0%": { opacity: "0" },
-          "100%": { opacity: "1" },
-        },
+        "gold-gradient":
+          "linear-gradient(135deg, rgb(var(--accent-dark)) 0%, rgb(var(--accent)) 35%, rgb(var(--accent-light)) 50%, rgb(var(--accent)) 65%, rgb(var(--accent-dark)) 100%)",
       },
     },
   },

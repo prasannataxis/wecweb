@@ -81,13 +81,13 @@ const features = [
 
 export default function WhyChooseUs() {
   return (
-    <section id="about" className="bg-luxury-black py-28 px-6">
+    <section id="about" className="bg-luxury-black pt-40 pb-28 px-6">
       <div className="max-w-7xl mx-auto">
 
         {/* Section header */}
         <div className="text-center mb-16">
           <div className="gold-divider mb-6" />
-          <p className="text-[10px] tracking-[0.4em] uppercase text-gold font-sans font-medium mb-4">
+          <p className="text-xs tracking-[0.4em] uppercase text-gold font-sans font-medium mb-4">
             The Standard We Keep
           </p>
           <h2 className="font-serif text-4xl md:text-5xl text-luxury-text font-bold">
@@ -103,7 +103,7 @@ export default function WhyChooseUs() {
           {features.map((feat) => (
             <div
               key={feat.title}
-              className="group p-6 border border-luxury-border hover:border-gold/25 transition-all duration-300 flex flex-col gap-4"
+              className="group p-6 border border-luxury-border hover:border-gold/25 lift-glow flex flex-col gap-4"
             >
               {/* Icon */}
               <div className="text-gold/60 group-hover:text-gold transition-colors duration-300">

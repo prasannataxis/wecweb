@@ -5,7 +5,6 @@ const events = [
     location: "SW19, Wimbledon",
     dates: "23 Jun – 6 Jul 2025",
     tag: "Tennis",
-    color: "#1a4a1a",
     accent: "rgba(34,197,94,0.12)",
   },
   {
@@ -14,7 +13,6 @@ const events = [
     location: "Ascot, Berkshire",
     dates: "17 – 21 Jun 2025",
     tag: "Horse Racing",
-    color: "#2a1a1a",
     accent: "rgba(239,68,68,0.12)",
   },
   {
@@ -23,7 +21,6 @@ const events = [
     location: "Wembley, London",
     dates: "Year-round events",
     tag: "Stadium",
-    color: "#1a1a2a",
     accent: "rgba(99,102,241,0.12)",
   },
   {
@@ -32,7 +29,6 @@ const events = [
     location: "Greenwich Peninsula",
     dates: "Year-round events",
     tag: "Arena",
-    color: "#1a1a2a",
     accent: "rgba(59,130,246,0.12)",
   },
   {
@@ -41,7 +37,6 @@ const events = [
     location: "Twickenham, London",
     dates: "Six Nations & more",
     tag: "Rugby",
-    color: "#1a1a1a",
     accent: "rgba(245,158,11,0.10)",
   },
   {
@@ -50,20 +45,19 @@ const events = [
     location: "Chelsea, London",
     dates: "19 – 23 May 2025",
     tag: "Garden Show",
-    color: "#1a2a1a",
     accent: "rgba(16,185,129,0.10)",
   },
 ];
 
 export default function LondonEvents() {
   return (
-    <section id="events" className="bg-luxury-dark py-28 px-6">
+    <section id="events" className="bg-luxury-dark pt-40 pb-28 px-6">
       <div className="max-w-7xl mx-auto">
 
         {/* Section header */}
         <div className="text-center mb-16">
           <div className="gold-divider mb-6" />
-          <p className="text-[10px] tracking-[0.4em] uppercase text-gold font-sans font-medium mb-4">
+          <p className="text-xs tracking-[0.4em] uppercase text-gold font-sans font-medium mb-4">
             Event Transfers
           </p>
           <h2 className="font-serif text-4xl md:text-5xl text-luxury-text font-bold">
@@ -79,8 +73,8 @@ export default function LondonEvents() {
           {events.map((ev) => (
             <div
               key={ev.name}
-              className="group relative overflow-hidden border border-luxury-border hover:border-gold/30 transition-all duration-300 cursor-pointer"
-              style={{ background: ev.color }}
+              className="group relative overflow-hidden bg-luxury-card2 border border-luxury-border hover:border-gold/30 lift-glow cursor-pointer"
+              
             >
               {/* Accent glow */}
               <div
@@ -91,10 +85,10 @@ export default function LondonEvents() {
               <div className="relative p-6 flex flex-col gap-4">
                 {/* Tag + Date row */}
                 <div className="flex items-center justify-between">
-                  <span className="text-[9px] tracking-[0.25em] uppercase text-gold/70 font-sans font-medium border border-gold/20 px-2.5 py-1">
+                  <span className="text-xs tracking-[0.25em] uppercase text-gold/70 font-sans font-medium border border-gold/20 px-2.5 py-1">
                     {ev.tag}
                   </span>
-                  <span className="text-[10px] text-luxury-muted font-sans">{ev.dates}</span>
+                  <span className="text-xs text-luxury-muted font-sans">{ev.dates}</span>
                 </div>
 
                 {/* Event name */}
@@ -119,7 +113,7 @@ export default function LondonEvents() {
                   href="#booking"
                   className="mt-1 flex items-center justify-between py-3 px-4 border border-gold/20 hover:border-gold/60 hover:bg-gold/5 group-hover:border-gold/40 transition-all duration-300"
                 >
-                  <span className="text-[10px] tracking-[0.2em] uppercase text-gold font-sans font-semibold">
+                  <span className="text-xs tracking-[0.2em] uppercase text-gold font-sans font-semibold">
                     Book Chauffeur
                   </span>
                   <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-3.5 h-3.5 text-gold">

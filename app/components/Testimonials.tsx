@@ -52,7 +52,7 @@ export default function Testimonials() {
         {/* Section header */}
         <div className="text-center mb-16">
           <div className="gold-divider mb-6" />
-          <p className="text-[10px] tracking-[0.4em] uppercase text-gold font-sans font-medium mb-4">
+          <p className="text-xs tracking-[0.4em] uppercase text-gold font-sans font-medium mb-4">
             Client Reviews
           </p>
           <h2 className="font-serif text-4xl md:text-5xl text-luxury-text font-bold">
@@ -63,7 +63,7 @@ export default function Testimonials() {
         {/* Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {testimonials.map((t) => (
-            <div key={t.name} className="luxury-card p-8 flex flex-col gap-5">
+            <div key={t.name} className="luxury-card lift-glow border-run border-run-hover p-8 flex flex-col gap-5">
               {/* Stars */}
               <StarRow count={t.rating} />
 
@@ -78,13 +78,13 @@ export default function Testimonials() {
               {/* Reviewer */}
               <div className="mt-auto flex items-center gap-4 pt-5 border-t border-luxury-border">
                 <div className="w-10 h-10 rounded-full bg-gold/10 border border-gold/20 flex items-center justify-center flex-shrink-0">
-                  <span className="text-[10px] tracking-wider text-gold font-sans font-semibold">
+                  <span className="text-xs tracking-wider text-gold font-sans font-semibold">
                     {t.initials}
                   </span>
                 </div>
                 <div>
                   <div className="text-sm text-luxury-text font-sans font-medium">{t.name}</div>
-                  <div className="text-[10px] text-luxury-muted font-sans mt-0.5 tracking-wide">
+                  <div className="text-xs text-luxury-muted font-sans mt-0.5 tracking-wide">
                     {t.role}
                   </div>
                 </div>

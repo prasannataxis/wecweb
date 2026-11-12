@@ -1,19 +1,19 @@
 const quickLinks = [
-  { label: "Home", href: "/gold" },
-  { label: "Fleet", href: "/gold/fleet" },
-  { label: "Services", href: "/gold/services" },
-  { label: "Events", href: "/gold/events" },
-  { label: "About", href: "/gold/about" },
-  { label: "Contact", href: "/gold/contact" },
+  { label: "Home", href: "/" },
+  { label: "Fleet", href: "/fleet" },
+  { label: "Services", href: "/services" },
+  { label: "Events", href: "/events" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
 ];
 
 const services = [
-  { label: "Heathrow Transfers", href: "/gold/services" },
-  { label: "Gatwick Transfers", href: "/gold/services" },
-  { label: "Corporate Accounts", href: "/gold/services" },
-  { label: "Event Chauffeur", href: "/gold/services" },
-  { label: "Wedding Hire", href: "/gold/services" },
-  { label: "As Directed", href: "/gold/services" },
+  { label: "Heathrow Transfers", href: "/services" },
+  { label: "Gatwick Transfers", href: "/services" },
+  { label: "Corporate Accounts", href: "/services" },
+  { label: "Event Chauffeur", href: "/services" },
+  { label: "Wedding Hire", href: "/services" },
+  { label: "As Directed", href: "/services" },
 ];
 
 import Link from "next/link";
@@ -50,7 +50,7 @@ export default function Footer() {
             </div>
             <Link
               href="/#booking"
-              className="flex-shrink-0 px-10 py-4 bg-gold-gradient text-luxury-black text-sm tracking-[0.25em] uppercase font-sans font-bold hover:opacity-90 transition-opacity"
+              className="flex-shrink-0 px-10 py-4 bg-gold-gradient text-on-accent shine-btn neon-pulse text-sm tracking-[0.25em] uppercase font-sans font-bold hover:opacity-90 transition-opacity"
             >
               Get a Quote Now
             </Link>
@@ -79,17 +79,17 @@ export default function Footer() {
                     <circle cx="48" cy="13.5" r="2" fill="url(#fl1)" />
                     <defs>
                       <linearGradient id="fl1" x1="0" y1="0" x2="56" y2="48" gradientUnits="userSpaceOnUse">
-                        <stop offset="0%"   stopColor="#9B7A28" />
-                        <stop offset="50%"  stopColor="#E8C96A" />
-                        <stop offset="100%" stopColor="#9B7A28" />
+                        <stop offset="0%"   style={{ stopColor: "rgb(var(--accent-dark))" }} />
+                        <stop offset="50%"  style={{ stopColor: "rgb(var(--accent-light))" }} />
+                        <stop offset="100%" style={{ stopColor: "rgb(var(--accent-dark))" }} />
                       </linearGradient>
                     </defs>
                   </svg>
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="text-[11px] tracking-[0.45em] text-luxury-text font-serif font-semibold uppercase">Wimbledon</span>
+                  <span className="text-xs tracking-[0.45em] text-luxury-text font-serif font-semibold uppercase">Wimbledon</span>
                   <span className="block h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
-                  <span className="text-[8px] tracking-[0.5em] text-gold font-sans font-medium uppercase">Limousines</span>
+                  <span className="text-xs tracking-[0.5em] text-gold font-sans font-medium uppercase">Limousines</span>
                 </div>
               </div>
               <p className="text-luxury-muted text-xs font-sans font-light leading-relaxed mb-6">
@@ -132,7 +132,7 @@ export default function Footer() {
 
             {/* Quick links */}
             <div>
-              <h4 className="text-[10px] tracking-[0.25em] uppercase text-gold font-sans font-semibold mb-5">
+              <h4 className="text-xs tracking-[0.25em] uppercase text-gold font-sans font-semibold mb-5">
                 Quick Links
               </h4>
               <ul className="flex flex-col gap-2.5">
@@ -151,7 +151,7 @@ export default function Footer() {
 
             {/* Services */}
             <div>
-              <h4 className="text-[10px] tracking-[0.25em] uppercase text-gold font-sans font-semibold mb-5">
+              <h4 className="text-xs tracking-[0.25em] uppercase text-gold font-sans font-semibold mb-5">
                 Services
               </h4>
               <ul className="flex flex-col gap-2.5">
@@ -170,7 +170,7 @@ export default function Footer() {
 
             {/* Coverage */}
             <div>
-              <h4 className="text-[10px] tracking-[0.25em] uppercase text-gold font-sans font-semibold mb-5">
+              <h4 className="text-xs tracking-[0.25em] uppercase text-gold font-sans font-semibold mb-5">
                 Coverage
               </h4>
               <p className="text-xs text-luxury-muted font-sans font-light leading-relaxed mb-4">
@@ -180,7 +180,7 @@ export default function Footer() {
                 {["London", "Surrey", "Kent", "Essex", "Hertfordshire", "Berkshire"].map((area) => (
                   <span
                     key={area}
-                    className="text-[9px] tracking-[0.1em] uppercase px-2 py-1 border border-luxury-border text-luxury-subtle font-sans"
+                    className="text-xs tracking-[0.1em] uppercase px-2 py-1 border border-luxury-border text-luxury-subtle font-sans"
                   >
                     {area}
                   </span>
@@ -193,12 +193,12 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="border-t border-luxury-border py-6 px-6">
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p className="text-[10px] text-luxury-subtle font-sans tracking-wide">
+            <p className="text-xs text-luxury-subtle font-sans tracking-wide">
               &copy; {new Date().getFullYear()} Wimbledon Limousines. All rights reserved.
             </p>
             <div className="flex gap-5">
               {["Privacy Policy", "Terms & Conditions", "Cookie Policy"].map((l) => (
-                <a key={l} href="#" className="text-[10px] text-luxury-subtle hover:text-gold transition-colors font-sans tracking-wide">
+                <a key={l} href="#" className="text-xs text-luxury-subtle hover:text-gold transition-colors font-sans tracking-wide">
                   {l}
                 </a>
               ))}
