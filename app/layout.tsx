@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Montserrat } from "next/font/google";
+import { Playfair_Display, Montserrat, Cinzel, Bodoni_Moda, Michroma, Italiana } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/Navbar";
 import { WhatsAppButton } from "./components/contact-info";
@@ -14,6 +14,11 @@ const playfair = Playfair_Display({
   style: ["normal", "italic"],
   display: "swap",
 });
+
+const cinzel = Cinzel({ subsets: ["latin"], variable: "--font-cinzel", weight: ["500", "600", "700"], display: "swap" });
+const bodoni = Bodoni_Moda({ subsets: ["latin"], variable: "--font-bodoni", weight: ["500", "600", "700"], display: "swap", preload: false, adjustFontFallback: false });
+const michroma = Michroma({ subsets: ["latin"], variable: "--font-michroma", weight: "400", display: "swap", preload: false });
+const italiana = Italiana({ subsets: ["latin"], variable: "--font-italiana", weight: "400", display: "swap", preload: false });
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -37,7 +42,8 @@ export default function RootLayout({
       lang="en"
       data-mode={DEFAULT_SETTINGS.mode}
       data-accent={DEFAULT_SETTINGS.accent}
-      className={`${playfair.variable} ${montserrat.variable}`}
+      data-brand-font={DEFAULT_SETTINGS.brand.font}
+      className={`${playfair.variable} ${montserrat.variable} ${cinzel.variable} ${bodoni.variable} ${michroma.variable} ${italiana.variable}`}
       suppressHydrationWarning
     >
       <head>

@@ -41,7 +41,7 @@ export default function Footer() {
             <Link href="/" className="inline-flex items-center gap-3 mb-5">
               <BrandEmblem className="h-12" />
               <span className="flex flex-col gap-1 leading-none">
-                <span className="text-sm tracking-[0.4em] text-luxury-text font-serif font-semibold uppercase">Wimbledon</span>
+                <span className="wm-footer text-luxury-text uppercase">Wimbledon</span>
                 <span className="text-[11px] tracking-[0.2em] text-gold font-sans font-medium uppercase">Executive Chauffeurs</span>
               </span>
             </Link>

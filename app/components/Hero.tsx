@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useLayoutEffect, useCallback } from "react";
 import { useSettings } from "../theme/SettingsProvider";
+import { legibilityFor, useSlideLuminance } from "../theme/legibility";
 import { AUTO_REVEAL_MS, IDLE_RETURN_MS, INTRO_SEEN_KEY, Settings } from "../theme/config";
 import BrandEmblem from "./BrandEmblem";
 
@@ -45,6 +46,9 @@ function shouldSkipIntro(s: Settings) {
 export default function Hero() {
   const { settings, loaded } = useSettings();
   const { slogan1, slogan2 } = settings.business;
+
+  // Pick light/dark text and halo strength from the photo behind the headline
+  const slideLums = useSlideLuminance(slides.map((x) => x.image));
   const [phase, setPhaseState] = useState<Phase>("playing");
   const [current, setCurrent] = useState(0);
   const [finePointer, setFinePointer] = useState<boolean | null>(null);
@@ -80,7 +84,8 @@ export default function Hero() {
   const [showName, setShowName] = useState(false);
   const { alternate, interval } = settings.headline;
   useEffect(() => {
-    setShowName(false);
+    // Open on the company name, then alternate with the slogan
+    setShowName(alternate);
     if (phase !== "done" || !alternate) return;
     const t = setInterval(() => setShowName((v) => !v), Math.max(2, interval) * 1000);
     return () => clearInterval(t);
@@ -152,6 +157,10 @@ export default function Hero() {
     };
   }, [phase, loaded, settings.introReturn, setPhase]);
 
+  const legibleBase = { photoLum: slideLums[current], mode: settings.mode, setting: settings.headline.legibility, haloPct: settings.headline.halo };
+  const introLegible = legibilityFor({ ...legibleBase, overlayPct: settings.background.introOverlay, blurPx: 0 });
+  const homeLegible = legibilityFor({ ...legibleBase, overlayPct: settings.background.homeOverlay, blurPx: settings.background.homeBlur });
+
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
 
@@ -190,21 +199,21 @@ export default function Hero() {
       <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-luxury-black to-transparent pointer-events-none" aria-hidden />
 
       {/* Intro: logo + name */}
-      <div className="intro-layer" aria-hidden={phase === "done"}>
+      <div className="intro-layer" aria-hidden={phase === "done"} data-tone={introLegible.tone} style={{ ["--halo" as string]: introLegible.halo }}>
         <BrandEmblem shimmer className="intro-emblem" />
-        <h1 className="intro-title font-serif font-semibold text-luxury-text uppercase" aria-label="Wimbledon">
+        <h1 className="intro-title legible-text text-luxury-text uppercase" aria-label="Wimbledon">
           {"WIMBLEDON".split("").map((ch, i) => (
             <span key={i} className="intro-letter" style={{ animationDelay: `${0.6 + i * 0.08}s` }}>{ch}</span>
           ))}
         </h1>
         <span className="intro-rule" />
-        <p className="intro-sub font-sans font-medium text-gold uppercase">Executive Chauffeurs</p>
+        <p className="intro-sub legible-gold gold-text uppercase">Executive Chauffeurs</p>
         {hint && <p className="intro-hint font-sans text-luxury-text/80 uppercase">{hint}</p>}
         <p className="intro-car font-sans text-gold/80 uppercase">{slides[current].name}</p>
       </div>
 
       {/* Booking view */}
-      <div className="reveal-layer" aria-hidden={phase === "playing"}>
+      <div className="reveal-layer" aria-hidden={phase === "playing"} data-tone={homeLegible.tone} style={{ ["--halo" as string]: homeLegible.halo }}>
         <div className="reveal-inner">
         <div className="rv rv-1 home-badge inline-flex items-center gap-3 px-4 py-2 border border-gold/30 bg-luxury-black/50 backdrop-blur-sm">
           <span className="avail-dot flex-shrink-0" />
@@ -215,21 +224,21 @@ export default function Hero() {
 
         <h2 className="rv rv-2 headline-swap font-serif leading-[0.95] text-center select-none">
           <span data-active={!showName} aria-hidden={showName} className="flex flex-col items-center justify-center">
-            <span className="home-h1-a block text-luxury-text font-bold tracking-tight" style={{ ["--len" as string]: Math.max(13, slogan1.length) }}>{slogan1}</span>
-            <span className="home-h1-b block gold-text headline-fx font-bold italic tracking-tight px-3" style={{ ["--len" as string]: Math.max(11, slogan2.length) }}>{slogan2}</span>
+            <span className="home-h1-a block legible-text text-luxury-text font-bold tracking-tight" style={{ ["--len" as string]: Math.max(13, slogan1.length) }}>{slogan1}</span>
+            <span className="home-h1-b block gold-text headline-fx legible-gold font-bold italic tracking-tight px-3" style={{ ["--len" as string]: Math.max(11, slogan2.length) }}>{slogan2}</span>
           </span>
           <span data-active={showName} aria-hidden={!showName} className="brand-lockup">
             <BrandEmblem shimmer className="brand-lockup-emblem" />
-            <span className="brand-lockup-name font-serif font-semibold text-luxury-text uppercase">Wimbledon</span>
+            <span className="brand-lockup-name legible-text text-luxury-text uppercase">Wimbledon</span>
             <span className="brand-lockup-sub">
               <span className="brand-lockup-rule" />
-              <span className="gold-text headline-fx font-serif italic font-bold whitespace-nowrap px-2">Executive Chauffeurs</span>
+              <span className="brand-lockup-tag gold-text headline-fx legible-gold whitespace-nowrap px-1">Executive Chauffeurs</span>
               <span className="brand-lockup-rule" />
             </span>
           </span>
         </h2>
 
-        <p className="rv rv-3 home-tagline text-luxury-text/85 text-base md:text-lg font-sans font-light max-w-xl text-center leading-relaxed">
+        <p className="rv rv-3 home-tagline legible-text text-luxury-text/85 text-base md:text-lg font-sans font-light max-w-xl text-center leading-relaxed">
           Executive chauffeur services across London and the South East. Airport transfers,
           corporate accounts &amp; private events.
         </p>

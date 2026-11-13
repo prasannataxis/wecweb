@@ -35,6 +35,7 @@ const config: Config = {
       fontFamily: {
         serif: ["var(--font-playfair)", "Georgia", "serif"],
         sans: ["var(--font-montserrat)", "system-ui", "sans-serif"],
+        brand: ["var(--font-brand)", "var(--font-playfair)", "Georgia", "serif"],
       },
       backgroundImage: {
         "gold-gradient":

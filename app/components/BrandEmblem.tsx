@@ -1,6 +1,6 @@
-// The WEC emblem, rebuilt from three alpha masks (see logo/build_emblem.py) so the
-// gold parts follow the accent colour and the silver parts follow the mode.
-export const EMBLEM_ASPECT = 900 / 520;
+// The WEC emblem as layers built by scripts/build_emblem.py: gold and silver shapes
+// filled by theme colours, with the original artwork's shading multiplied on top.
+export const EMBLEM_ASPECT = 900 / 521;
 
 export default function BrandEmblem({ className = "", shimmer = false, label }: {
   className?: string;
@@ -17,6 +17,7 @@ export default function BrandEmblem({ className = "", shimmer = false, label }: 
     >
       <span className="emblem-layer emblem-gold" />
       <span className="emblem-layer emblem-silver" />
+      <span className="emblem-layer emblem-shade" />
       <span className="emblem-layer emblem-shine" />
     </span>
   );

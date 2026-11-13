@@ -132,13 +132,25 @@ textarea::placeholder { color: rgb(var(--subtle)); }
 }
 
 
-/* Brand emblem: gold mask filled with the accent, silver mask with a mode neutral */
-:root, [data-mode="dark"] { --silver-a: 150 158 168; --silver-b: 236 240 245; --shine-alpha: 0.85; }
-[data-mode="light"] { --silver-a: 10 22 40; --silver-b: 70 84 108; --shine-alpha: 0.12; }
-/* Soft metallic edges wash out on ivory — deepen the emblem in light mode */
-[data-mode="light"] .brand-emblem { filter: brightness(0.8) saturate(1.25) contrast(1.1); }
+/* Brand wordmark font, chosen in admin. Size/tracking multipliers even out how
+   wide each typeface sets so the wordmarks fit the same space. */
+:root, [data-brand-font="cinzel"] { --font-brand: var(--font-cinzel); --bf-size: 1; --bf-track: 1; }
+[data-brand-font="bodoni"]   { --font-brand: var(--font-bodoni); --bf-size: 1.04; --bf-track: 0.9; }
+[data-brand-font="michroma"] { --font-brand: var(--font-michroma); --bf-size: 0.74; --bf-track: 0.5; }
+[data-brand-font="italiana"] { --font-brand: var(--font-italiana); --bf-size: 1.14; --bf-track: 1; }
+[data-brand-font="playfair"] { --font-brand: var(--font-playfair); --bf-size: 1; --bf-track: 1; }
 
-.brand-emblem { position: relative; display: inline-block; flex-shrink: 0; }
+.wm-nav { font-family: var(--font-brand); font-weight: 600; font-size: calc(13px * var(--bf-size)); letter-spacing: calc(0.28em * var(--bf-track)); }
+@media (min-width: 640px) { .wm-nav { font-size: calc(16px * var(--bf-size)); letter-spacing: calc(0.38em * var(--bf-track)); } }
+.wm-footer { font-family: var(--font-brand); font-weight: 600; font-size: calc(15px * var(--bf-size)); letter-spacing: calc(0.36em * var(--bf-track)); }
+
+/* Brand emblem: solid gold/silver shapes, with the original artwork's shading
+   multiplied on top so every accent keeps the same metallic depth. */
+:root, [data-mode="dark"] { --emblem-silver: 232 236 242; --shine-alpha: 0.9; }
+[data-mode="light"] { --emblem-silver: 52 66 92; --shine-alpha: 0.35; }
+
+.brand-emblem { position: relative; display: inline-block; flex-shrink: 0; isolation: isolate; }
+[data-mode="dark"] .brand-emblem { filter: saturate(1.35) brightness(1.08); }
 .emblem-layer {
   position: absolute;
   inset: 0;
@@ -148,16 +160,23 @@ textarea::placeholder { color: rgb(var(--subtle)); }
   mask-repeat: no-repeat;
 }
 .emblem-gold {
-  background: linear-gradient(115deg, rgb(var(--accent-dark)) 0%, rgb(var(--accent)) 30%, rgb(var(--accent-pale)) 48%, rgb(var(--accent)) 62%, rgb(var(--accent-dark)) 100%);
+  background: linear-gradient(115deg,
+    rgb(var(--accent-light)) 0%, rgb(var(--accent)) 30%, rgb(var(--accent-pale)) 50%,
+    rgb(var(--accent)) 70%, rgb(var(--accent-light)) 100%);
   background-size: 250% 100%;
   background-position: 30% 0;
   -webkit-mask-image: url(/brand/emblem-gold.png);
   mask-image: url(/brand/emblem-gold.png);
 }
+[data-mode="light"] .emblem-gold { background: rgb(var(--accent)); }
 .emblem-silver {
-  background: linear-gradient(115deg, rgb(var(--silver-a)) 0%, rgb(var(--silver-b)) 45%, rgb(var(--silver-a)) 100%);
+  background: rgb(var(--emblem-silver));
   -webkit-mask-image: url(/brand/emblem-silver.png);
   mask-image: url(/brand/emblem-silver.png);
+}
+.emblem-shade {
+  background: url(/brand/emblem-shade.png) center / 100% 100% no-repeat;
+  mix-blend-mode: multiply;
 }
 .emblem-shine {
   background: rgb(255 255 255 / var(--shine-alpha));
@@ -165,7 +184,8 @@ textarea::placeholder { color: rgb(var(--subtle)); }
   mask-image: url(/brand/emblem-shine.png);
 }
 .brand-emblem-shimmer .emblem-gold { animation: sweep var(--hl-dur, 8s) linear infinite; animation-play-state: var(--hl-play, running); }
-.brand-emblem-shimmer { filter: drop-shadow(0 0 18px rgb(var(--accent) / 0.35)); }
+.brand-emblem-shimmer { filter: saturate(1.35) brightness(1.08) drop-shadow(0 0 18px rgb(var(--accent) / 0.35)); }
+[data-mode="light"] .brand-emblem-shimmer { filter: drop-shadow(0 0 12px rgb(var(--accent) / 0.25)); }
 
 /* Shimmering headline text */
 .gold-text {
@@ -478,10 +498,12 @@ textarea::placeholder { color: rgb(var(--subtle)); }
   margin-bottom: clamp(16px, 3vh, 32px);
 }
 .intro-title {
-  font-size: clamp(36px, min(10vw, 13vh), 132px);
-  letter-spacing: 0.22em;
+  font-family: var(--font-brand);
+  font-weight: 600;
+  font-size: calc(clamp(36px, min(10vw, 13vh), 132px) * var(--bf-size));
+  letter-spacing: calc(0.22em * var(--bf-track));
   line-height: 1;
-  margin-right: -0.22em;
+  margin-right: calc(-0.22em * var(--bf-track));
   text-shadow: 0 0 40px rgb(var(--accent) / 0.35);
 }
 .intro-letter { display: inline-block; }
@@ -494,7 +516,9 @@ textarea::placeholder { color: rgb(var(--subtle)); }
   box-shadow: 0 0 10px rgb(var(--accent) / 0.8);
 }
 .intro-sub {
-  font-size: clamp(12px, min(2.4vw, 3.2vh), 26px);
+  font-family: var(--font-brand);
+  font-weight: 600;
+  font-size: calc(clamp(12px, min(2.4vw, 3.2vh), 26px) * var(--bf-size));
   --sub-track: 0.45em;
   letter-spacing: var(--sub-track);
   margin-right: calc(var(--sub-track) * -1);
@@ -563,8 +587,8 @@ textarea::placeholder { color: rgb(var(--subtle)); }
   gap: clamp(10px, 2vh, 24px);
 }
 
-.home-h1-a { font-size: calc(clamp(30px, min(11vw, 8vh), 96px) * min(1, 13 / var(--len, 13))); }
-.home-h1-b { font-size: calc(clamp(36px, min(13.5vw, 10vh), 116px) * min(1, 11 / var(--len, 11))); }
+.home-h1-a { font-size: calc(clamp(26px, min(9vw, 6.5vh), 76px) * min(1, 13 / var(--len, 13))); }
+.home-h1-b { font-size: calc(clamp(32px, min(11vw, 8.2vh), 96px) * min(1, 11 / var(--len, 11))); }
 
 /* Extra room below gradient text so descenders (g, y, p) aren't clipped */
 .gold-text.headline-fx { padding-bottom: 0.2em; margin-bottom: -0.14em; line-height: 1.05; }
@@ -572,19 +596,31 @@ textarea::placeholder { color: rgb(var(--subtle)); }
 /* Brand lockup shown when the booking headline swaps to the company name —
    deliberately larger and richer than the slogan */
 .brand-lockup { display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.brand-lockup-emblem { height: clamp(50px, 10vh, 130px); margin-bottom: clamp(2px, 0.8vh, 12px); }
+.brand-lockup-emblem { height: clamp(58px, 12vh, 150px); margin-bottom: clamp(4px, 1vh, 14px); }
 .brand-lockup-name {
-  font-size: clamp(32px, min(9.5vw, 7.5vh), 104px);
-  letter-spacing: 0.2em;
-  margin-right: -0.2em;
+  font-family: var(--font-brand);
+  font-weight: 600;
+  font-size: calc(clamp(36px, min(11vw, 9vh), 124px) * var(--bf-size));
+  letter-spacing: calc(0.18em * var(--bf-track));
+  margin-right: calc(-0.18em * var(--bf-track));
   line-height: 1;
-  text-shadow: 0 0 32px rgb(var(--accent) / 0.35);
+  background: linear-gradient(180deg, rgb(var(--hl-text, var(--text))) 35%, color-mix(in srgb, rgb(var(--hl-text, var(--text))) 70%, rgb(var(--accent))) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 .brand-lockup-sub { display: flex; align-items: center; gap: clamp(8px, 1.5vw, 18px); margin-top: clamp(4px, 1vh, 10px); }
-.brand-lockup-sub .gold-text { font-size: clamp(20px, min(5.4vw, 4.2vh), 54px); }
+.brand-lockup-tag {
+  font-family: var(--font-brand);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: calc(clamp(13px, min(3.4vw, 2.8vh), 30px) * var(--bf-size));
+  letter-spacing: calc(0.42em * var(--bf-track));
+  margin-right: calc(-0.42em * var(--bf-track));
+}
 .brand-lockup-rule { height: 1px; width: clamp(24px, 6vw, 90px); background: linear-gradient(90deg, transparent, rgb(var(--accent)), transparent); box-shadow: 0 0 8px rgb(var(--accent) / 0.7); }
 [data-active="true"].brand-lockup .brand-lockup-name { animation: brandTrack 1.2s ease-out both; }
-@keyframes brandTrack { from { letter-spacing: 0.05em; opacity: 0.3; } to { letter-spacing: 0.2em; opacity: 1; } }
+@keyframes brandTrack { from { letter-spacing: calc(0.04em * var(--bf-track)); opacity: 0.3; } to { letter-spacing: calc(0.18em * var(--bf-track)); opacity: 1; } }
 
 /* Name ↔ slogan swap: both stacked in one grid cell so the layout never jumps */
 .headline-swap { display: grid; }
@@ -600,6 +636,50 @@ textarea::placeholder { color: rgb(var(--subtle)); }
 @media (max-height: 820px), (max-width: 639px) { .home-stats { display: none; } }
 @media (max-height: 700px), (max-width: 639px) { .home-tagline { display: none; } }
 @media (max-height: 600px) { .home-badge { display: none; } }
+
+/* Legibility over the photo (tone + --halo set per layer from the measured backdrop) */
+[data-tone="light"] { --hl-text: 248 244 236; --hl-halo: 4 6 12; }
+[data-tone="dark"]  { --hl-text: 10 22 40;   --hl-halo: 250 246 239; }
+[data-tone] .legible-text {
+  color: rgb(var(--hl-text));
+  text-shadow:
+    0 0 calc(26px * var(--halo, 0)) rgb(var(--hl-halo) / calc(0.9 * var(--halo, 0))),
+    0 1px 3px rgb(var(--hl-halo) / calc(0.55 * var(--halo, 0)));
+}
+[data-tone] .legible-gold,
+[data-tone] .brand-lockup-name {
+  filter:
+    drop-shadow(0 0 calc(16px * var(--halo, 0)) rgb(var(--hl-halo) / calc(0.85 * var(--halo, 0))))
+    drop-shadow(0 1px 2px rgb(var(--hl-halo) / calc(0.6 * var(--halo, 0))));
+}
+/* Gold that reads on a light backdrop / a dark backdrop, whatever the site mode */
+[data-tone="dark"] .gold-text.headline-fx,
+[data-tone="dark"] .legible-gold.gold-text {
+  background-image: linear-gradient(90deg,
+    color-mix(in srgb, rgb(var(--accent-dark)) 70%, black) 0%, rgb(var(--accent-dark)) 30%,
+    rgb(var(--accent)) 50%, rgb(var(--accent-dark)) 70%, color-mix(in srgb, rgb(var(--accent-dark)) 70%, black) 100%);
+}
+[data-tone="light"] .gold-text.headline-fx,
+[data-tone="light"] .legible-gold.gold-text {
+  background-image: linear-gradient(90deg,
+    rgb(var(--accent)) 0%, rgb(var(--accent-light)) 25%,
+    color-mix(in srgb, rgb(var(--accent-pale)) var(--hl-pct, 70%), rgb(var(--accent-light))) 45%,
+    rgb(var(--accent-light)) 65%, rgb(var(--accent)) 100%);
+}
+/* Soft scrim behind the headline / intro name — invisible when contrast is already good */
+.headline-swap { position: relative; }
+.headline-swap::before,
+.intro-layer::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(closest-side, rgb(var(--hl-halo, 0 0 0) / calc(0.6 * var(--halo, 0))), transparent);
+  transition: background 0.8s ease;
+}
+.headline-swap::before { inset: -18% -22%; }
+.intro-layer::before { inset: 18% 8%; }
+.intro-layer { isolation: isolate; }
 
 /* Navbar and WhatsApp stay out of the way until the intro hands over */
 .site-nav, .wa-float { transition: opacity 0.7s ease, transform 0.7s ease; }

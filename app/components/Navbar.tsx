@@ -19,7 +19,7 @@ export function Logo() {
     <Link href="/" className="flex items-center gap-2.5 sm:gap-3 group flex-shrink min-w-0" aria-label="Wimbledon Executive Chauffeurs — home">
       <BrandEmblem className="h-9 sm:h-12 transition-transform duration-300 group-hover:scale-105" />
       <span className="flex flex-col gap-1 leading-none">
-        <span className="text-[13px] sm:text-base tracking-[0.28em] sm:tracking-[0.4em] text-luxury-text font-serif font-semibold uppercase">
+        <span className="wm-nav text-luxury-text uppercase">
           Wimbledon
         </span>
         <span className="block h-px w-full bg-gradient-to-r from-transparent via-gold/60 to-transparent" />

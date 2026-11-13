@@ -19,6 +19,7 @@ function apply(s: Settings) {
   const root = document.documentElement;
   root.dataset.mode = s.mode;
   root.dataset.accent = s.accent;
+  root.dataset.brandFont = s.brand.font;
   const vars = animationVars(s);
   for (const k in vars) root.style.setProperty(k, vars[k]);
 }

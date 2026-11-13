@@ -18,7 +18,12 @@ export type IntroFxSettings = {
   intensity: number; // 0–100
 };
 
+export type BrandFont = "cinzel" | "bodoni" | "michroma" | "italiana" | "playfair";
+export type Legibility = "auto" | "light" | "dark";
+
 export type HeadlineSettings = {
+  legibility: Legibility; // text tone over the photo: measured automatically, or forced
+  halo: number; // 0–100, strength of the soft backdrop behind the text when needed
   alternate: boolean; // swap between company name and slogan on the booking view
   interval: number; // seconds per swap
   motion: Motion; // shimmer sweep across the highlighted line
@@ -32,6 +37,10 @@ export type NavEdgeSettings = {
   speed: number;
   width: number; // px
   intensity: number; // 0–100
+};
+
+export type BrandSettings = {
+  font: BrandFont;
 };
 
 export type CardSettings = {
@@ -79,6 +88,7 @@ export type Settings = {
   headline: HeadlineSettings;
   navEdge: NavEdgeSettings;
   cards: CardSettings;
+  brand: BrandSettings;
   background: BackgroundSettings;
   homeFx: HomeFxSettings;
   business: Business;
@@ -99,9 +109,10 @@ export const DEFAULT_SETTINGS: Settings = {
   introReturn: "once",
   edge: { idle: "slow", hover: "fast", speed: 1, width: 1.5, intensity: 60 },
   intro: { speed: 0.7, size: 1, intensity: 55 },
-  headline: { alternate: true, interval: 6, motion: "slow", speed: 1, intensity: 70, entrance: 1 },
+  headline: { legibility: "auto", halo: 60, alternate: true, interval: 6, motion: "slow", speed: 1, intensity: 70, entrance: 1 },
   navEdge: { motion: "slow", speed: 1, width: 1.5, intensity: 70 },
   cards: { tint: 30, cycle: "slow", speed: 1 },
+  brand: { font: "cinzel" },
   background: { introOverlay: 70, homeOverlay: 100, homeBlur: 7, introSlide: 7, homeSlide: 7 },
   homeFx: { enabled: false, speed: 0.6, size: 1, intensity: 40 },
   business: {
@@ -118,6 +129,14 @@ export const DEFAULT_SETTINGS: Settings = {
     slogan2: "Distinction",
   },
 };
+
+export const BRAND_FONTS: { id: BrandFont; name: string; note: string; cssVar: string }[] = [
+  { id: "cinzel", name: "Cinzel", note: "Classic Roman capitals — timeless luxury", cssVar: "--font-cinzel" },
+  { id: "bodoni", name: "Bodoni Moda", note: "High-contrast fashion serif", cssVar: "--font-bodoni" },
+  { id: "michroma", name: "Michroma", note: "Wide, modern automotive", cssVar: "--font-michroma" },
+  { id: "italiana", name: "Italiana", note: "Slender, elegant display", cssVar: "--font-italiana" },
+  { id: "playfair", name: "Playfair Display", note: "The site's heading serif", cssVar: "--font-playfair" },
+];
 
 export const SLOGAN_PRESETS: { line1: string; line2: string }[] = [
   { line1: "Arrive With", line2: "Distinction" },
@@ -192,4 +211,4 @@ export function animationVars(s: Settings): Record<string, string> {
 
 // Runs in <head> before paint: applies saved theme and animation settings, and on
 // the home page decides whether the intro plays, so nothing flashes the wrong state.
-export const themeInitScript = `(function(){try{var mergeSettings=${mergeSettings.toString()};var animationVars=${animationVars.toString()};var d=document.documentElement;var raw=localStorage.getItem("${SETTINGS_KEY}");var s=mergeSettings(${JSON.stringify(DEFAULT_SETTINGS)},raw?JSON.parse(raw):null);d.dataset.mode=s.mode;d.dataset.accent=s.accent;var v=animationVars(s);for(var k in v)d.style.setProperty(k,v[k]);if(location.pathname==="/"){var skip=location.hash==="#booking"||(s.introReturn==="once"&&sessionStorage.getItem("${INTRO_SEEN_KEY}")==="1");d.dataset.intro=skip?"done":"playing";}}catch(e){}})();`;
+export const themeInitScript = `(function(){try{var mergeSettings=${mergeSettings.toString()};var animationVars=${animationVars.toString()};var d=document.documentElement;var raw=localStorage.getItem("${SETTINGS_KEY}");var s=mergeSettings(${JSON.stringify(DEFAULT_SETTINGS)},raw?JSON.parse(raw):null);d.dataset.mode=s.mode;d.dataset.accent=s.accent;d.dataset.brandFont=s.brand.font;var v=animationVars(s);for(var k in v)d.style.setProperty(k,v[k]);if(location.pathname==="/"){var skip=location.hash==="#booking"||(s.introReturn==="once"&&sessionStorage.getItem("${INTRO_SEEN_KEY}")==="1");d.dataset.intro=skip?"done":"playing";}}catch(e){}})();`;

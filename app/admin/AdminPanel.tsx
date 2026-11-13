@@ -2,7 +2,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSettings } from "../theme/SettingsProvider";
-import { ACCENTS, AUTO_REVEAL_MS, Business, DEFAULT_SETTINGS as D, IDLE_RETURN_MS, INTRO_SEEN_KEY, Motion, Settings, SLOGAN_PRESETS } from "../theme/config";
+import { ACCENTS, AUTO_REVEAL_MS, BRAND_FONTS, Business, DEFAULT_SETTINGS as D, IDLE_RETURN_MS, INTRO_SEEN_KEY, Legibility, Motion, Settings, SLOGAN_PRESETS } from "../theme/config";
+import BrandEmblem from "../components/BrandEmblem";
 
 type Option<V> = { value: V; label: string; description: string };
 
@@ -15,6 +16,12 @@ const motionOptions: Option<Motion>[] = [
   { value: "static", label: "Static", description: "Light stays still" },
   { value: "slow", label: "Slow", description: "Gentle drift" },
   { value: "fast", label: "Fast", description: "Quick sweep" },
+];
+
+const legibilityOptions: Option<Legibility>[] = [
+  { value: "auto", label: "Auto", description: "Measures each photo and picks light or dark text" },
+  { value: "light", label: "Light text", description: "Always cream text" },
+  { value: "dark", label: "Dark text", description: "Always navy text" },
 ];
 
 const onOffOptions: Option<"on" | "off">[] = [
@@ -102,7 +109,7 @@ function Panel({ title, subtitle, onReset, children }: {
   title: string; subtitle: string; onReset?: () => void; children: React.ReactNode;
 }) {
   return (
-    <section id={panelId(title)} className="border-run luxury-card p-6 sm:p-8 scroll-mt-[200px] sm:scroll-mt-[220px]">
+    <section id={panelId(title)} className="border-run luxury-card p-6 sm:p-8 scroll-mt-[200px] lg:scroll-mt-[120px]">
       <div className="flex items-start justify-between gap-4">
         <h2 className="font-serif text-2xl text-luxury-text font-semibold">{title}</h2>
         {onReset && (
@@ -128,40 +135,73 @@ function Panel({ title, subtitle, onReset, children }: {
 
 const panelId = (title: string) => "panel-" + title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
-const shortcuts = {
+type IconName = "palette" | "spark" | "drop" | "type" | "crown" | "line" | "image" | "photo" | "hand" | "loop" | "quote" | "building";
+
+const shortcuts: Record<"look" | "business", { title: string; label: string; icon: IconName }[]> = {
   look: [
-    { title: "Appearance", label: "Appearance" },
-    { title: "Card Edge Light", label: "Edge Light" },
-    { title: "Card Colours", label: "Card Colours" },
-    { title: "Home Headline", label: "Headline" },
-    { title: "Header Edge", label: "Header Edge" },
-    { title: "Home Intro Background", label: "Intro Background" },
-    { title: "Home Page Background", label: "Home Background" },
-    { title: "Home Intro — Touch Devices", label: "Touch Reveal" },
-    { title: "Home Intro — When It Returns", label: "Intro Return" },
+    { title: "Appearance", label: "Appearance", icon: "palette" },
+    { title: "Brand Typography", label: "Brand Font", icon: "crown" },
+    { title: "Home Headline", label: "Headline", icon: "type" },
+    { title: "Card Edge Light", label: "Edge Light", icon: "spark" },
+    { title: "Card Colours", label: "Card Colours", icon: "drop" },
+    { title: "Header Edge", label: "Header Edge", icon: "line" },
+    { title: "Home Intro Background", label: "Intro Background", icon: "image" },
+    { title: "Home Page Background", label: "Home Background", icon: "photo" },
+    { title: "Home Intro — Touch Devices", label: "Touch Reveal", icon: "hand" },
+    { title: "Home Intro — When It Returns", label: "Intro Return", icon: "loop" },
   ],
   business: [
-    { title: "Slogan", label: "Slogan" },
-    { title: "Business Details", label: "Business Details" },
+    { title: "Slogan", label: "Slogan", icon: "quote" },
+    { title: "Business Details", label: "Business Details", icon: "building" },
   ],
-} as const;
+};
+
+const iconPaths: Record<IconName, string> = {
+  palette: "M12 3a9 9 0 1 0 0 18c1 0 1.6-.8 1.6-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.8-1.7 1.7-1.7H16a5 5 0 0 0 5-5C21 6.6 17 3 12 3zM7.5 12a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm3-4a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm4.5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z",
+  spark: "M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8",
+  drop: "M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z",
+  type: "M4 7V5h16v2M9 19h6M12 5v14",
+  crown: "M3 18h18M4 16l2-9 4 4 2-6 2 6 4-4 2 9H4z",
+  line: "M3 12h18M3 8h4M17 16h4",
+  image: "M4 5h16v14H4zM4 15l5-5 4 4 3-3 4 4M15 9h.01",
+  photo: "M3 7h4l2-2h6l2 2h4v12H3zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",
+  hand: "M8 13V5.5a1.5 1.5 0 0 1 3 0V11m0-1.5a1.5 1.5 0 0 1 3 0V11m0-.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-.5A5.5 5.5 0 0 1 5 16.5L4 14a1.5 1.5 0 0 1 2.6-1.4L8 14.5",
+  loop: "M4 12a8 8 0 0 1 13.7-5.7L20 9M20 4v5h-5M20 12a8 8 0 0 1-13.7 5.7L4 15M4 20v-5h5",
+  quote: "M7 17h3l2-4V7H6v6h3l-2 4zm8 0h3l2-4V7h-6v6h3l-2 4z",
+  building: "M4 21V5l8-3 8 3v16M9 21v-4h6v4M8 8h1M8 12h1M15 8h1M15 12h1",
+};
+
+function Icon({ name, className = "w-4 h-4" }: { name: IconName; className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden>
+      <path d={iconPaths[name]} />
+    </svg>
+  );
+}
 
 function useActiveSection(ids: string[]) {
   const [active, setActive] = useState(ids[0]);
   useEffect(() => {
     setActive(ids[0]);
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-        if (visible[0]) setActive(visible[0].target.id);
-      },
-      { rootMargin: "-230px 0px -55% 0px" },
-    );
-    ids.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
-    return () => observer.disconnect();
+    const update = () => {
+      // the panel whose top has passed under the pinned header area
+      const line = window.innerWidth >= 1024 ? 140 : 240;
+      let current = ids[0];
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top - line <= 0) current = id;
+      }
+      // at the very bottom, the last panel may never reach the line
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) current = ids[ids.length - 1] ?? current;
+      setActive(current);
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ids.join("|")]);
   return [active, setActive] as const;
@@ -205,6 +245,36 @@ function LookTab() {
               })}
             </div>
           </div>
+        </div>
+      </Panel>
+
+      <Panel title="Brand Typography" subtitle="Typeface for the company name everywhere it appears — logo, intro and booking view." onReset={() => update({ brand: D.brand })}>
+        <div className="grid sm:grid-cols-2 gap-3" role="radiogroup">
+          {BRAND_FONTS.map((f) => {
+            const on = settings.brand.font === f.id;
+            return (
+              <button
+                key={f.id}
+                type="button"
+                role="radio"
+                aria-checked={on}
+                onClick={() => update({ brand: { font: f.id } })}
+                className={`p-4 border text-left transition-colors ${on ? "border-gold bg-gold/10" : "border-luxury-border hover:border-gold/50"}`}
+              >
+                <span className="flex items-center gap-3">
+                  <BrandEmblem className="h-8" />
+                  <span
+                    className="text-luxury-text uppercase whitespace-nowrap"
+                    style={{ fontFamily: `var(${f.cssVar})`, fontWeight: 600, fontSize: f.id === "michroma" ? 14 : 19, letterSpacing: f.id === "michroma" ? "0.12em" : "0.24em" }}
+                  >
+                    Wimbledon
+                  </span>
+                </span>
+                <span className="block text-sm text-luxury-text font-sans font-semibold mt-3">{f.name}</span>
+                <span className="block text-xs text-luxury-muted font-sans mt-0.5">{f.note}</span>
+              </button>
+            );
+          })}
         </div>
       </Panel>
 
@@ -252,6 +322,13 @@ function LookTab() {
 
       <Panel title="Home Headline" subtitle={`The "${settings.business.slogan1} ${settings.business.slogan2}" headline on the booking view.`} onReset={() => update({ headline: D.headline })}>
         <div className="grid gap-8">
+          <div>
+            <h3 className={sectionLabel}>Text legibility over the photo</h3>
+            <Choice compact name="hlLegible" options={legibilityOptions} value={headline.legibility} onChange={(legibility) => update({ headline: { legibility } })} />
+            <div className="mt-5">
+              <Slider label="Backdrop halo (applied only as much as needed)" value={headline.halo} min={0} max={100} step={5} format={percent} onChange={(halo) => update({ headline: { halo } })} />
+            </div>
+          </div>
           <div className="grid sm:grid-cols-2 gap-6 items-end">
             <div>
               <h3 className={sectionLabel}>Alternate with company name</h3>
@@ -446,6 +523,104 @@ const tabs = [
   { id: "business", label: "Business Data" },
 ] as const;
 
+function SectionNav({ sections, active, onJump }: {
+  sections: { title: string; label: string; icon: IconName }[];
+  active: string;
+  onJump: (id: string) => void;
+}) {
+  const index = Math.max(0, sections.findIndex((x) => panelId(x.title) === active));
+  return (
+    <nav aria-label="Sections" className="relative pl-5">
+      <span className="absolute left-[7px] top-2 bottom-2 w-px bg-luxury-border" aria-hidden />
+      <span
+        className="absolute left-[7px] top-2 w-px bg-gold transition-all duration-500"
+        style={{ height: `calc(${((index + 0.5) / sections.length) * 100}% - 8px)`, boxShadow: "0 0 8px rgb(var(--accent) / 0.8)" }}
+        aria-hidden
+      />
+      <ul className="flex flex-col gap-1">
+        {sections.map((x, i) => {
+          const id = panelId(x.title);
+          const on = id === active;
+          const done = i < index;
+          return (
+            <li key={id} className="relative">
+              <span
+                className={`absolute -left-5 top-1/2 -translate-y-1/2 w-[15px] h-[15px] rounded-full border-2 transition-colors ${
+                  on ? "border-gold bg-gold shadow-[0_0_10px_rgb(var(--accent)/0.8)]" : done ? "border-gold bg-luxury-dark" : "border-luxury-border bg-luxury-dark"
+                }`}
+                aria-hidden
+              />
+              <button
+                type="button"
+                onClick={() => onJump(id)}
+                aria-current={on ? "true" : undefined}
+                className={`w-full flex items-center gap-2.5 pl-3 pr-2 py-2 text-left text-sm font-sans transition-colors ${
+                  on ? "text-gold font-semibold bg-gold/10" : "text-luxury-muted hover:text-luxury-text"
+                }`}
+              >
+                <Icon name={x.icon} />
+                {x.label}
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+  );
+}
+
+function MobileSectionPicker({ sections, active, onJump }: {
+  sections: { title: string; label: string; icon: IconName }[];
+  active: string;
+  onJump: (id: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const current = sections.find((x) => panelId(x.title) === active) ?? sections[0];
+  const index = Math.max(0, sections.indexOf(current));
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        className="w-full flex items-center gap-3 py-3 text-left"
+      >
+        <span className="w-9 h-9 flex items-center justify-center border border-gold/50 text-gold"><Icon name={current.icon} /></span>
+        <span className="flex-1 min-w-0">
+          <span className="block text-xs tracking-[0.2em] uppercase text-luxury-muted font-sans">Section {index + 1} of {sections.length}</span>
+          <span className="block text-base text-luxury-text font-sans font-semibold truncate">{current.label}</span>
+        </span>
+        <span className="text-xs tracking-[0.15em] uppercase text-gold font-sans font-semibold flex items-center gap-1">
+          All sections
+          <svg viewBox="0 0 24 24" className={`w-4 h-4 transition-transform ${open ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="2" aria-hidden><path d="M6 9l6 6 6-6" /></svg>
+        </span>
+      </button>
+      <span className="absolute left-0 bottom-0 h-0.5 bg-gold transition-all duration-500" style={{ width: `${((index + 1) / sections.length) * 100}%` }} aria-hidden />
+      {open && (
+        <div className="absolute left-0 right-0 top-full mt-px z-40 grid grid-cols-2 gap-2 p-3 bg-luxury-card border border-gold/30 shadow-2xl">
+          {sections.map((x) => {
+            const id = panelId(x.title);
+            const on = id === active;
+            return (
+              <button
+                key={id}
+                type="button"
+                onClick={() => { setOpen(false); onJump(id); }}
+                className={`flex items-center gap-2 p-3 border text-left text-sm font-sans transition-colors ${
+                  on ? "border-gold bg-gold/15 text-gold font-semibold" : "border-luxury-border text-luxury-text hover:border-gold/50"
+                }`}
+              >
+                <Icon name={x.icon} />
+                <span className="truncate">{x.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function AdminPanel() {
   const { loaded } = useSettings();
   const [tab, setTab] = useState<(typeof tabs)[number]["id"]>("look");
@@ -462,58 +637,59 @@ export default function AdminPanel() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const tabButtons = (vertical: boolean) => (
+    <div className={vertical ? "grid grid-cols-2 gap-1 p-1 border border-luxury-border mb-6" : "flex border-b border-luxury-border"} role="tablist">
+      {tabs.map((t) => {
+        const on = tab === t.id;
+        return (
+          <button
+            key={t.id}
+            type="button"
+            role="tab"
+            aria-selected={on}
+            onClick={() => switchTab(t.id)}
+            className={
+              vertical
+                ? `py-2.5 text-xs tracking-[0.14em] uppercase font-sans font-semibold transition-colors ${on ? "bg-gold text-on-accent" : "text-luxury-muted hover:text-luxury-text"}`
+                : `relative flex-1 px-3 py-3.5 text-sm tracking-[0.16em] uppercase font-sans font-semibold transition-colors ${on ? "text-gold" : "text-luxury-muted hover:text-luxury-text"}`
+            }
+          >
+            {t.label}
+            {!vertical && <span className={`absolute left-0 right-0 -bottom-px h-0.5 bg-gold transition-transform duration-300 ${on ? "scale-x-100" : "scale-x-0"}`} />}
+          </button>
+        );
+      })}
+    </div>
+  );
+
   return (
     <div className="bg-luxury-dark min-h-screen pt-32 sm:pt-36 pb-20 px-4 sm:px-6">
-      <div className="max-w-4xl mx-auto">
-        <div className="mb-8">
+      <div className="max-w-6xl mx-auto">
+        <div className="mb-8 lg:pl-[290px]">
           <p className="text-xs tracking-[0.4em] uppercase text-gold font-sans font-medium mb-3">Admin</p>
           <h1 className="font-serif text-4xl md:text-5xl text-luxury-text font-bold">Site Settings</h1>
-          <p className="mt-4 text-base text-luxury-muted font-sans leading-relaxed">
+          <p className="mt-4 text-base text-luxury-muted font-sans leading-relaxed max-w-3xl">
             Changes apply instantly. Until the database is connected, settings are saved in this browser only —
             visitors on other devices see the defaults.
           </p>
         </div>
 
-        <div className="sticky top-[68px] sm:top-[80px] z-30 -mx-4 sm:-mx-6 px-4 sm:px-6 mb-8 bg-luxury-dark/95 backdrop-blur-md border-b border-luxury-border">
-        <div className="flex border-b border-luxury-border" role="tablist">
-          {tabs.map((t) => (
-            <button
-              key={t.id}
-              type="button"
-              role="tab"
-              aria-selected={tab === t.id}
-              onClick={() => switchTab(t.id)}
-              className={`relative px-5 sm:px-8 py-4 text-sm tracking-[0.18em] uppercase font-sans font-semibold transition-colors ${
-                tab === t.id ? "text-gold" : "text-luxury-muted hover:text-luxury-text"
-              }`}
-            >
-              {t.label}
-              <span className={`absolute left-0 right-0 -bottom-px h-0.5 bg-gold transition-transform duration-300 ${tab === t.id ? "scale-x-100" : "scale-x-0"}`} />
-            </button>
-          ))}
-        </div>
-        <nav aria-label="Jump to section" className="flex gap-2 overflow-x-auto py-3 -mx-1 px-1 [scrollbar-width:none]">
-          {sections.map((x) => {
-            const id = panelId(x.title);
-            const on = active === id;
-            return (
-              <button
-                key={id}
-                type="button"
-                onClick={() => jump(id)}
-                aria-current={on ? "true" : undefined}
-                className={`flex-shrink-0 px-3.5 py-1.5 border text-xs tracking-[0.12em] uppercase font-sans font-semibold whitespace-nowrap transition-colors ${
-                  on ? "border-gold bg-gold/15 text-gold" : "border-luxury-border text-luxury-muted hover:text-luxury-text hover:border-gold/50"
-                }`}
-              >
-                {x.label}
-              </button>
-            );
-          })}
-        </nav>
+        {/* Phones & tablets: pinned tabs + current section with a picker for all sections */}
+        <div className="lg:hidden sticky top-[68px] sm:top-[80px] z-30 -mx-4 sm:-mx-6 px-4 sm:px-6 mb-8 bg-luxury-dark/95 backdrop-blur-md border-b border-luxury-border">
+          {tabButtons(false)}
+          {loaded && <MobileSectionPicker sections={sections} active={active} onJump={jump} />}
         </div>
 
-        {loaded && (tab === "look" ? <LookTab /> : <BusinessTab />)}
+        <div className="lg:grid lg:grid-cols-[250px_1fr] lg:gap-10">
+          {/* Desktop: pinned sidebar with every section always visible */}
+          <aside className="hidden lg:block">
+            <div className="sticky top-[112px] max-h-[calc(100vh-130px)] overflow-y-auto pr-1">
+              {tabButtons(true)}
+              {loaded && <SectionNav sections={sections} active={active} onJump={jump} />}
+            </div>
+          </aside>
+          <div className="min-w-0">{loaded && (tab === "look" ? <LookTab /> : <BusinessTab />)}</div>
+        </div>
       </div>
     </div>
   );
