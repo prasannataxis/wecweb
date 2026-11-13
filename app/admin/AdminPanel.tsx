@@ -110,7 +110,7 @@ function Panel({ title, subtitle, onReset, children }: {
   title: string; subtitle: string; onReset?: () => void; children: React.ReactNode;
 }) {
   return (
-    <section id={panelId(title)} className="border-run luxury-card p-6 sm:p-8 scroll-mt-[200px] lg:scroll-mt-[120px]">
+    <section id={panelId(title)} className="border-run luxury-card p-6 sm:p-8 scroll-mt-[200px] lg:scroll-mt-[156px]">
       <div className="flex items-start justify-between gap-4">
         <h2 className="font-serif text-2xl text-luxury-text font-semibold">{title}</h2>
         {onReset && (
@@ -142,9 +142,9 @@ const shortcuts: Record<"look" | "business", { title: string; label: string; ico
   look: [
     { title: "Appearance", label: "Appearance", icon: "palette" },
     { title: "Brand Typography", label: "Brand Font", icon: "crown" },
-    { title: "Home Headline", label: "Headline", icon: "type" },
     { title: "Card Edge Light", label: "Edge Light", icon: "spark" },
     { title: "Card Colours", label: "Card Colours", icon: "drop" },
+    { title: "Home Headline", label: "Headline", icon: "type" },
     { title: "Header Edge", label: "Header Edge", icon: "line" },
     { title: "Home Intro Background", label: "Intro Background", icon: "image" },
     { title: "Home Page Background", label: "Home Background", icon: "photo" },
@@ -186,11 +186,16 @@ function useActiveSection(ids: string[]) {
     setActive(ids[0]);
     const update = () => {
       // the panel whose top has passed under the pinned header area
-      const line = window.innerWidth >= 1024 ? 140 : 240;
+      const line = window.innerWidth >= 1024 ? 176 : 240;
+      // by on-page position, so it stays right even if the list order changes
       let current = ids[0];
+      let best = -Infinity;
       for (const id of ids) {
-        const el = document.getElementById(id);
-        if (el && el.getBoundingClientRect().top - line <= 0) current = id;
+        const top = document.getElementById(id)?.getBoundingClientRect().top;
+        if (top !== undefined && top - line <= 0 && top > best) {
+          best = top;
+          current = id;
+        }
       }
       // at the very bottom, the last panel may never reach the line
       if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) current = ids[ids.length - 1] ?? current;
@@ -293,7 +298,7 @@ function LookTab() {
           </div>
           <div className="grid sm:grid-cols-3 gap-6">
             <Slider label="Speed" value={edge.speed} min={0.25} max={2} step={0.05} format={times} onChange={(speed) => update({ edge: { speed } })} />
-            <Slider label="Width" value={edge.width} min={1} max={5} step={0.5} format={(v) => `${v}px`} onChange={(width) => update({ edge: { width } })} />
+            <Slider label="Width" value={edge.width} min={0.5} max={5} step={0.5} format={(v) => `${v}px`} onChange={(width) => update({ edge: { width } })} />
             <Slider label="Intensity" value={edge.intensity} min={0} max={100} step={5} format={percent} onChange={(intensity) => update({ edge: { intensity } })} />
           </div>
           <div className="border-run luxury-card lift-glow p-8 text-center">
@@ -358,7 +363,7 @@ function LookTab() {
           </div>
           <div className="grid sm:grid-cols-3 gap-6">
             <Slider label="Speed" value={navEdge.speed} min={0.25} max={2} step={0.05} format={times} onChange={(speed) => update({ navEdge: { speed } })} />
-            <Slider label="Thickness" value={navEdge.width} min={1} max={5} step={0.5} format={(v) => `${v}px`} onChange={(width) => update({ navEdge: { width } })} />
+            <Slider label="Thickness" value={navEdge.width} min={0.5} max={5} step={0.5} format={(v) => `${v}px`} onChange={(width) => update({ navEdge: { width } })} />
             <Slider label="Intensity" value={navEdge.intensity} min={0} max={100} step={5} format={percent} onChange={(intensity) => update({ navEdge: { intensity } })} />
           </div>
         </div>
@@ -639,8 +644,8 @@ export default function AdminPanel() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const tabButtons = (vertical: boolean) => (
-    <div className={vertical ? "grid grid-cols-2 gap-1 p-1 border border-luxury-border mb-6" : "flex border-b border-luxury-border"} role="tablist">
+  const tabBar = (
+    <div className="flex overflow-x-auto [scrollbar-width:none] border-b border-luxury-border" role="tablist">
       {tabs.map((t) => {
         const on = tab === t.id;
         return (
@@ -650,14 +655,12 @@ export default function AdminPanel() {
             role="tab"
             aria-selected={on}
             onClick={() => switchTab(t.id)}
-            className={
-              vertical
-                ? `py-2.5 text-xs tracking-[0.14em] uppercase font-sans font-semibold transition-colors ${on ? "bg-gold text-on-accent" : "text-luxury-muted hover:text-luxury-text"}`
-                : `relative flex-1 px-3 py-3.5 text-sm tracking-[0.16em] uppercase font-sans font-semibold transition-colors ${on ? "text-gold" : "text-luxury-muted hover:text-luxury-text"}`
-            }
+            className={`relative flex-shrink-0 px-5 sm:px-8 py-4 text-sm tracking-[0.18em] uppercase font-sans font-semibold whitespace-nowrap transition-colors ${
+              on ? "text-gold" : "text-luxury-muted hover:text-luxury-text"
+            }`}
           >
             {t.label}
-            {!vertical && <span className={`absolute left-0 right-0 -bottom-px h-0.5 bg-gold transition-transform duration-300 ${on ? "scale-x-100" : "scale-x-0"}`} />}
+            <span className={`absolute left-0 right-0 -bottom-px h-0.5 bg-gold transition-transform duration-300 ${on ? "scale-x-100" : "scale-x-0"}`} />
           </button>
         );
       })}
@@ -667,7 +670,7 @@ export default function AdminPanel() {
   return (
     <div className="bg-luxury-dark min-h-screen pt-32 sm:pt-36 pb-20 px-4 sm:px-6">
       <div className="max-w-6xl mx-auto">
-        <div className="mb-8 lg:pl-[290px]">
+        <div className="mb-8">
           <div className="flex items-center justify-between gap-4 mb-3">
             <p className="text-xs tracking-[0.4em] uppercase text-gold font-sans font-medium">Admin</p>
             {session && (
@@ -690,17 +693,16 @@ export default function AdminPanel() {
           </p>
         </div>
 
-        {/* Phones & tablets: pinned tabs + current section with a picker for all sections */}
-        <div className="lg:hidden sticky top-[68px] sm:top-[80px] z-30 -mx-4 sm:-mx-6 px-4 sm:px-6 mb-8 bg-luxury-dark/95 backdrop-blur-md border-b border-luxury-border">
-          {tabButtons(false)}
-          {loaded && <MobileSectionPicker sections={sections} active={active} onJump={jump} />}
+        {/* Pinned tabs across the top (room for more tabs); phones also get the section picker */}
+        <div className="sticky top-[68px] sm:top-[80px] z-30 -mx-4 sm:-mx-6 px-4 sm:px-6 mb-8 bg-luxury-dark/95 backdrop-blur-md border-b border-luxury-border lg:border-b-0">
+          {tabBar}
+          <div className="lg:hidden">{loaded && <MobileSectionPicker sections={sections} active={active} onJump={jump} />}</div>
         </div>
 
         <div className="lg:grid lg:grid-cols-[250px_1fr] lg:gap-10">
           {/* Desktop: pinned sidebar with every section always visible */}
           <aside className="hidden lg:block">
-            <div className="sticky top-[112px] max-h-[calc(100vh-130px)] overflow-y-auto pr-1">
-              {tabButtons(true)}
+            <div className="sticky top-[156px] max-h-[calc(100vh-176px)] overflow-y-auto pr-1">
               {loaded && <SectionNav sections={sections} active={active} onJump={jump} />}
             </div>
           </aside>
