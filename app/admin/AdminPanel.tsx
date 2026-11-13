@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useSettings } from "../theme/SettingsProvider";
-import { ACCENTS, AUTO_REVEAL_MS, Business, IDLE_RETURN_MS, INTRO_SEEN_KEY, Motion, Settings, SLOGAN_PRESETS } from "../theme/config";
+import { ACCENTS, AUTO_REVEAL_MS, Business, DEFAULT_SETTINGS as D, IDLE_RETURN_MS, INTRO_SEEN_KEY, Motion, Settings, SLOGAN_PRESETS } from "../theme/config";
 
 type Option<V> = { value: V; label: string; description: string };
 
@@ -15,6 +15,11 @@ const motionOptions: Option<Motion>[] = [
   { value: "static", label: "Static", description: "Light stays still" },
   { value: "slow", label: "Slow", description: "Gentle drift" },
   { value: "fast", label: "Fast", description: "Quick sweep" },
+];
+
+const onOffOptions: Option<"on" | "off">[] = [
+  { value: "on", label: "On", description: "Enabled" },
+  { value: "off", label: "Off", description: "Disabled" },
 ];
 
 const touchOptions: Option<Settings["touchReveal"]>[] = [
@@ -93,10 +98,28 @@ function Slider({ label, value, min, max, step, format, onChange }: {
   );
 }
 
-function Panel({ title, subtitle, children }: { title: string; subtitle: string; children: React.ReactNode }) {
+function Panel({ title, subtitle, onReset, children }: {
+  title: string; subtitle: string; onReset?: () => void; children: React.ReactNode;
+}) {
   return (
     <section className="border-run luxury-card p-6 sm:p-8">
-      <h2 className="font-serif text-2xl text-luxury-text font-semibold">{title}</h2>
+      <div className="flex items-start justify-between gap-4">
+        <h2 className="font-serif text-2xl text-luxury-text font-semibold">{title}</h2>
+        {onReset && (
+          <button
+            type="button"
+            onClick={onReset}
+            title={`Reset ${title} to defaults`}
+            className="flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 border border-gold/40 text-gold text-xs tracking-[0.15em] uppercase font-sans font-semibold hover:bg-gold/10 transition-colors"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-3.5 h-3.5" aria-hidden>
+              <path d="M3 12a9 9 0 1 0 3-6.7L3 8" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M3 3v5h5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            Reset
+          </button>
+        )}
+      </div>
       <p className="text-sm text-luxury-muted font-sans mt-1 mb-6">{subtitle}</p>
       {children}
     </section>
@@ -108,11 +131,11 @@ const percent = (v: number) => `${v}%`;
 
 function LookTab() {
   const { settings, update, reset } = useSettings();
-  const { edge, intro, headline, navEdge, cards } = settings;
+  const { edge, intro, headline, navEdge, cards, background, homeFx } = settings;
 
   return (
     <div className="flex flex-col gap-8">
-      <Panel title="Appearance" subtitle="Background mode and accent colour used across the whole site.">
+      <Panel title="Appearance" subtitle="Background mode and accent colour used across the whole site." onReset={() => update({ mode: D.mode, accent: D.accent })}>
         <div className="grid gap-8">
           <div>
             <h3 className={sectionLabel}>Mode</h3>
@@ -144,7 +167,7 @@ function LookTab() {
         </div>
       </Panel>
 
-      <Panel title="Card Edge Light" subtitle="The running light around boxes on every page. Hover the preview to test.">
+      <Panel title="Card Edge Light" subtitle="The running light around boxes on every page. Hover the preview to test." onReset={() => update({ edge: D.edge })}>
         <div className="grid gap-8">
           <div className="grid sm:grid-cols-2 gap-6">
             <div>
@@ -168,19 +191,33 @@ function LookTab() {
         </div>
       </Panel>
 
-      <Panel title="Card Colours" subtitle="The colour wash on every card, each card in its own hue like the Events page.">
-        <div className="grid sm:grid-cols-2 gap-6 items-center">
-          <Slider label="Colour intensity" value={cards.tint} min={0} max={100} step={5} format={percent} onChange={(tint) => update({ cards: { tint } })} />
-          <div className="grid grid-cols-3 gap-3">
-            {[0, 1, 2].map((i) => (
+      <Panel title="Card Colours" subtitle="Each card starts on its own colour in page order, then slowly cycles through the set. Static keeps the fixed order." onReset={() => update({ cards: D.cards })}>
+        <div className="grid gap-8">
+          <div>
+            <h3 className={sectionLabel}>Colour cycling</h3>
+            <Choice compact name="tintCycle" options={motionOptions} value={cards.cycle} onChange={(cycle) => update({ cards: { cycle } })} />
+          </div>
+          <div className="grid sm:grid-cols-2 gap-6">
+            <Slider label="Colour intensity" value={cards.tint} min={0} max={100} step={5} format={percent} onChange={(tint) => update({ cards: { tint } })} />
+            <Slider label="Cycling speed" value={cards.speed} min={0.25} max={3} step={0.05} format={times} onChange={(speed) => update({ cards: { speed } })} />
+          </div>
+          <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+            {[0, 1, 2, 3, 4, 5].map((i) => (
               <div key={i} className="luxury-card h-16" />
             ))}
           </div>
         </div>
       </Panel>
 
-      <Panel title="Home Headline" subtitle={`The "${settings.business.slogan1} ${settings.business.slogan2}" headline on the booking view.`}>
+      <Panel title="Home Headline" subtitle={`The "${settings.business.slogan1} ${settings.business.slogan2}" headline on the booking view.`} onReset={() => update({ headline: D.headline })}>
         <div className="grid gap-8">
+          <div className="grid sm:grid-cols-2 gap-6 items-end">
+            <div>
+              <h3 className={sectionLabel}>Alternate with company name</h3>
+              <Choice compact name="hlAlt" options={onOffOptions} value={headline.alternate ? "on" : "off"} onChange={(v) => update({ headline: { alternate: v === "on" } })} />
+            </div>
+            <Slider label="Swap every" value={headline.interval} min={3} max={20} step={1} format={(v) => `${v}s`} onChange={(interval) => update({ headline: { interval } })} />
+          </div>
           <div>
             <h3 className={sectionLabel}>Shimmer</h3>
             <Choice compact name="hlMotion" options={motionOptions} value={headline.motion} onChange={(motion) => update({ headline: { motion } })} />
@@ -194,7 +231,7 @@ function LookTab() {
         </div>
       </Panel>
 
-      <Panel title="Header Edge" subtitle="The glowing line under the top menu (also used above the footer).">
+      <Panel title="Header Edge" subtitle="The glowing line under the top menu (also used above the footer)." onReset={() => update({ navEdge: D.navEdge })}>
         <div className="grid gap-8">
           <div>
             <h3 className={sectionLabel}>Motion</h3>
@@ -208,19 +245,54 @@ function LookTab() {
         </div>
       </Panel>
 
-      <Panel title="Home Intro Background" subtitle="Photo zoom, light streaks, glowing particles and the centre glow behind the logo.">
-        <div className="grid sm:grid-cols-3 gap-6">
-          <Slider label="Speed" value={intro.speed} min={0.25} max={2} step={0.05} format={times} onChange={(speed) => update({ intro: { speed } })} />
-          <Slider label="Size" value={intro.size} min={0.5} max={2} step={0.1} format={times} onChange={(size) => update({ intro: { size } })} />
-          <Slider label="Intensity" value={intro.intensity} min={0} max={100} step={5} format={percent} onChange={(intensity) => update({ intro: { intensity } })} />
+      <Panel
+        title="Home Intro Background"
+        subtitle="Behind the logo intro: photo slideshow plus zoom, light streaks, particles and glow. Higher overlay = photo more subdued."
+        onReset={() => update({ intro: D.intro, background: { introOverlay: D.background.introOverlay, introSlide: D.background.introSlide } })}
+      >
+        <div className="grid gap-6">
+          <div className="grid sm:grid-cols-2 gap-6">
+            <Slider label="Background overlay" value={background.introOverlay} min={0} max={100} step={5} format={percent} onChange={(introOverlay) => update({ background: { introOverlay } })} />
+            <Slider label="Slideshow: each photo" value={background.introSlide} min={3} max={20} step={1} format={(v) => `${v}s`} onChange={(introSlide) => update({ background: { introSlide } })} />
+          </div>
+          <div className="grid sm:grid-cols-3 gap-6">
+            <Slider label="Effects speed" value={intro.speed} min={0.25} max={2} step={0.05} format={times} onChange={(speed) => update({ intro: { speed } })} />
+            <Slider label="Effects size" value={intro.size} min={0.5} max={2} step={0.1} format={times} onChange={(size) => update({ intro: { size } })} />
+            <Slider label="Effects intensity" value={intro.intensity} min={0} max={100} step={5} format={percent} onChange={(intensity) => update({ intro: { intensity } })} />
+          </div>
         </div>
       </Panel>
 
-      <Panel title="Home Intro — Touch Devices" subtitle="Phones and tablets have no mouse, so choose what reveals the booking view.">
+      <Panel
+        title="Home Page Background"
+        subtitle="Behind the booking view, after the intro. Effects are the same zoom, streaks, particles and glow — off by default."
+        onReset={() => update({ homeFx: D.homeFx, background: { homeOverlay: D.background.homeOverlay, homeBlur: D.background.homeBlur, homeSlide: D.background.homeSlide } })}
+      >
+        <div className="grid gap-6">
+          <div className="grid sm:grid-cols-3 gap-6">
+            <Slider label="Background overlay" value={background.homeOverlay} min={0} max={100} step={5} format={percent} onChange={(homeOverlay) => update({ background: { homeOverlay } })} />
+            <Slider label="Background blur" value={background.homeBlur} min={0} max={16} step={1} format={(v) => `${v}px`} onChange={(homeBlur) => update({ background: { homeBlur } })} />
+            <Slider label="Slideshow: each photo" value={background.homeSlide} min={3} max={20} step={1} format={(v) => `${v}s`} onChange={(homeSlide) => update({ background: { homeSlide } })} />
+          </div>
+          <div>
+            <h3 className={sectionLabel}>Background effects</h3>
+            <Choice compact name="homeFx" options={onOffOptions} value={homeFx.enabled ? "on" : "off"} onChange={(v) => update({ homeFx: { enabled: v === "on" } })} />
+          </div>
+          {homeFx.enabled && (
+            <div className="grid sm:grid-cols-3 gap-6">
+              <Slider label="Effects speed" value={homeFx.speed} min={0.25} max={2} step={0.05} format={times} onChange={(speed) => update({ homeFx: { speed } })} />
+              <Slider label="Effects size" value={homeFx.size} min={0.5} max={2} step={0.1} format={times} onChange={(size) => update({ homeFx: { size } })} />
+              <Slider label="Effects intensity" value={homeFx.intensity} min={0} max={100} step={5} format={percent} onChange={(intensity) => update({ homeFx: { intensity } })} />
+            </div>
+          )}
+        </div>
+      </Panel>
+
+      <Panel title="Home Intro — Touch Devices" subtitle="Phones and tablets have no mouse, so choose what reveals the booking view." onReset={() => update({ touchReveal: D.touchReveal })}>
         <Choice name="touchReveal" options={touchOptions} value={settings.touchReveal} onChange={(touchReveal) => update({ touchReveal })} />
       </Panel>
 
-      <Panel title="Home Intro — When It Returns" subtitle="Whether the logo intro plays again after the booking view has been shown.">
+      <Panel title="Home Intro — When It Returns" subtitle="Whether the logo intro plays again after the booking view has been shown." onReset={() => update({ introReturn: D.introReturn })}>
         <Choice name="introReturn" options={returnOptions} value={settings.introReturn} onChange={(introReturn) => update({ introReturn })} />
       </Panel>
 
@@ -298,11 +370,11 @@ function BusinessTab() {
 
   return (
     <div className="flex flex-col gap-8">
-      <Panel title="Slogan" subtitle="The two-line headline on the home page. The second line is highlighted.">
+      <Panel title="Slogan" subtitle="The two-line headline on the home page. The second line is highlighted." onReset={() => update({ business: { slogan1: D.business.slogan1, slogan2: D.business.slogan2 } })}>
         <SloganPicker />
       </Panel>
 
-      <Panel title="Business Details" subtitle="Shown in the footer and on the Contact page. Saved as you type.">
+      <Panel title="Business Details" subtitle="Shown in the footer and on the Contact page. Saved as you type." onReset={() => update({ business: { ...D.business, slogan1: settings.business.slogan1, slogan2: settings.business.slogan2 } })}>
         <div className="grid sm:grid-cols-2 gap-5">
           {businessFields.map((f) => (
             <label key={f.key} className={`flex flex-col gap-2 ${f.wide ? "sm:col-span-2" : ""}`}>

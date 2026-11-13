@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "./components/Navbar";
 import { WhatsAppButton } from "./components/contact-info";
 import { SettingsProvider } from "./theme/SettingsProvider";
+import CardTints from "./theme/CardTints";
 import { DEFAULT_SETTINGS, themeInitScript } from "./theme/config";
 
 const playfair = Playfair_Display({
@@ -47,6 +48,7 @@ export default function RootLayout({
           <Navbar />
           {children}
           <WhatsAppButton />
+          <CardTints />
         </SettingsProvider>
       </body>
     </html>

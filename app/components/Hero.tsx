@@ -6,6 +6,8 @@ import { CrownLogo } from "./Navbar";
 
 type Phase = "playing" | "done";
 
+const BRAND = { line1: "Wimbledon", line2: "Executive Chauffeurs" };
+
 const slides = [
   { name: "Mercedes-Benz S-Class", image: "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=1920&q=80" },
   { name: "Bentley Continental GT", image: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1920&q=80" },
@@ -70,10 +72,21 @@ export default function Hero() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const slideSeconds = phase === "playing" ? settings.background.introSlide : settings.background.homeSlide;
   useEffect(() => {
-    const t = setInterval(() => setCurrent((c) => (c + 1) % slides.length), 7000);
+    const t = setInterval(() => setCurrent((c) => (c + 1) % slides.length), Math.max(2, slideSeconds) * 1000);
     return () => clearInterval(t);
-  }, []);
+  }, [slideSeconds]);
+
+  // Booking-view headline alternates between the company name and the slogan
+  const [showName, setShowName] = useState(false);
+  const { alternate, interval } = settings.headline;
+  useEffect(() => {
+    setShowName(false);
+    if (phase !== "done" || !alternate) return;
+    const t = setInterval(() => setShowName((v) => !v), Math.max(2, interval) * 1000);
+    return () => clearInterval(t);
+  }, [phase, alternate, interval]);
 
   // Next.js updates the hash via pushState (no hashchange event), so Book Now also
   // dispatches "wl:book", and the hash is re-checked once after client-side navigation.
@@ -206,9 +219,16 @@ export default function Hero() {
           </span>
         </div>
 
-        <h2 className="rv rv-2 font-serif leading-[0.95] text-center select-none">
-          <span className="home-h1-a block text-luxury-text font-bold tracking-tight">{slogan1}</span>
-          <span className="home-h1-b block gold-text headline-fx font-bold italic tracking-tight px-3 pb-1">{slogan2}</span>
+        <h2 className="rv rv-2 headline-swap font-serif leading-[0.95] text-center select-none">
+          {[
+            { key: "slogan", a: slogan1, b: slogan2, active: !showName },
+            { key: "name", a: BRAND.line1, b: BRAND.line2, active: showName },
+          ].map((h) => (
+            <span key={h.key} data-active={h.active} aria-hidden={!h.active} className="block">
+              <span className="home-h1-a block text-luxury-text font-bold tracking-tight" style={{ ["--len" as string]: Math.max(13, h.a.length) }}>{h.a}</span>
+              <span className="home-h1-b block gold-text headline-fx font-bold italic tracking-tight px-3" style={{ ["--len" as string]: Math.max(11, h.b.length) }}>{h.b}</span>
+            </span>
+          ))}
         </h2>
 
         <p className="rv rv-3 home-tagline text-luxury-text/85 text-base md:text-lg font-sans font-light max-w-xl text-center leading-relaxed">

@@ -19,6 +19,8 @@ export type IntroFxSettings = {
 };
 
 export type HeadlineSettings = {
+  alternate: boolean; // swap between company name and slogan on the booking view
+  interval: number; // seconds per swap
   motion: Motion; // shimmer sweep across the highlighted line
   speed: number;
   intensity: number; // 0–100, how bright the shimmer highlight is
@@ -34,6 +36,23 @@ export type NavEdgeSettings = {
 
 export type CardSettings = {
   tint: number; // 0–100, strength of the per-card colour wash
+  cycle: Motion; // colours shifting over time; static = fixed colour per position
+  speed: number;
+};
+
+export type BackgroundSettings = {
+  introOverlay: number; // 0–100, how strongly the photo is dimmed/washed on the intro
+  homeOverlay: number; // same, on the booking view
+  homeBlur: number; // px
+  introSlide: number; // seconds per photo
+  homeSlide: number;
+};
+
+export type HomeFxSettings = {
+  enabled: boolean; // photo zoom, streaks, particles and glow on the booking view
+  speed: number;
+  size: number;
+  intensity: number;
 };
 
 export type Business = {
@@ -60,6 +79,8 @@ export type Settings = {
   headline: HeadlineSettings;
   navEdge: NavEdgeSettings;
   cards: CardSettings;
+  background: BackgroundSettings;
+  homeFx: HomeFxSettings;
   business: Business;
 };
 
@@ -78,16 +99,18 @@ export const DEFAULT_SETTINGS: Settings = {
   introReturn: "once",
   edge: { idle: "slow", hover: "fast", speed: 1, width: 1.5, intensity: 60 },
   intro: { speed: 0.7, size: 1, intensity: 55 },
-  headline: { motion: "slow", speed: 1, intensity: 70, entrance: 1 },
+  headline: { alternate: true, interval: 6, motion: "slow", speed: 1, intensity: 70, entrance: 1 },
   navEdge: { motion: "slow", speed: 1, width: 1.5, intensity: 70 },
-  cards: { tint: 30 },
+  cards: { tint: 30, cycle: "slow", speed: 1 },
+  background: { introOverlay: 70, homeOverlay: 100, homeBlur: 7, introSlide: 7, homeSlide: 7 },
+  homeFx: { enabled: false, speed: 0.6, size: 1, intensity: 40 },
   business: {
     companyName: "Wimbledon Executive Chauffeurs Ltd",
     companyNumber: "00000000",
     vatNumber: "GB 000 0000 00",
     registeredAddress: "Registered office address, Wimbledon, London SW19",
     phone: "+44 (0) 7700 000000",
-    email: "info@wimbledonlimousines.co.uk",
+    email: "info@wimbledonexecutivechauffeurs.co.uk",
     whatsapp: "447700000000",
     base: "Wimbledon, London SW19",
     areas: "London, Surrey, Kent, Essex, Hertfordshire, Berkshire",
@@ -155,6 +178,15 @@ export function animationVars(s: Settings): Record<string, string> {
     "--nav-h": s.navEdge.width + "px",
     "--nav-alpha": String(s.navEdge.intensity / 100),
     "--tint-alpha": String((s.cards.tint / 100) * 0.4),
+    "--tint-dur": dur(24, s.cards.speed, s.cards.cycle),
+    "--tint-play": play(s.cards.cycle),
+    "--intro-overlay": String(s.background.introOverlay / 100),
+    "--home-overlay": String(s.background.homeOverlay / 100),
+    "--home-blur": s.background.homeBlur + "px",
+    "--home-fx-alpha": String(s.homeFx.enabled ? s.homeFx.intensity / 100 : 0),
+    "--home-time": String(1 / Math.max(0.1, s.homeFx.speed)),
+    "--home-size": String(s.homeFx.size),
+    "--home-zoom-play": s.homeFx.enabled ? "running" : "paused",
   };
 }
 

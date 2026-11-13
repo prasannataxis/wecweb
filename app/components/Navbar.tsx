@@ -7,6 +7,7 @@ const navLinks = [
   { label: "Home", href: "/" },
   { label: "Fleet", href: "/fleet" },
   { label: "Services", href: "/services" },
+  { label: "Corporate", href: "/corporate" },
   { label: "Events", href: "/events" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
@@ -107,12 +108,12 @@ export default function Navbar() {
       <div className={`max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between transition-all duration-500 ${scrolled ? "py-3 sm:py-4" : "py-4 sm:py-5"}`}>
         <Logo />
 
-        <nav className="hidden lg:flex items-center gap-5 xl:gap-9">
+        <nav className="hidden xl:flex items-center gap-6 2xl:gap-9">
           {navLinks.map((link) => (
             <Link
               key={link.label}
               href={link.href}
-              className={`nav-link text-sm tracking-[0.1em] xl:tracking-[0.15em] uppercase whitespace-nowrap font-sans font-medium transition-colors duration-200 ${
+              className={`nav-link text-sm tracking-[0.12em] 2xl:tracking-[0.15em] uppercase whitespace-nowrap font-sans font-medium transition-colors duration-200 ${
                 pathname === link.href ? "active text-gold" : "text-luxury-text/85 hover:text-gold"
               }`}
             >
@@ -121,7 +122,7 @@ export default function Navbar() {
           ))}
         </nav>
 
-        <div className="hidden lg:flex items-center gap-2 xl:gap-3">
+        <div className="hidden xl:flex items-center gap-3">
           <AdminLink active={pathname === "/admin"} />
           <Link
             href="/#booking"
@@ -132,7 +133,7 @@ export default function Navbar() {
           </Link>
         </div>
 
-        <div className="lg:hidden flex items-center gap-2">
+        <div className="xl:hidden flex items-center gap-2">
         <AdminLink active={pathname === "/admin"} />
         <button
           className="w-11 h-11 flex flex-col items-center justify-center gap-[5px] border border-gold/30"
@@ -149,7 +150,7 @@ export default function Navbar() {
 
       <div className="nav-glow-bar" />
 
-      <div className={`lg:hidden overflow-hidden transition-all duration-300 ${menuOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"}`}>
+      <div className={`xl:hidden overflow-hidden transition-all duration-300 ${menuOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"}`}>
         <div className="bg-luxury-dark border-t border-gold/10 px-6 py-4 flex flex-col">
           {navLinks.map((link) => (
             <Link

@@ -35,7 +35,10 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     try {
       const raw = localStorage.getItem(SETTINGS_KEY);
-      if (raw) setSettings(mergeSettings(DEFAULT_SETTINGS, JSON.parse(raw)));
+      const loadedSettings = mergeSettings(DEFAULT_SETTINGS, raw ? JSON.parse(raw) : null);
+      setSettings(loadedSettings);
+      // Re-apply in case React re-rendered <html> and dropped what the head script set
+      apply(loadedSettings);
     } catch {}
     setLoaded(true);
   }, []);

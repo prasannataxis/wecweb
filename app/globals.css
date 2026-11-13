@@ -169,17 +169,44 @@ textarea::placeholder { color: rgb(var(--subtle)); }
     rgb(var(--accent)) 65%, rgb(var(--accent-dark)) 100%);
 }
 
-/* Cards — each gets its own colour wash, cycling like the event cards */
-.luxury-card { --tint: 34 197 94; }
-.luxury-card:nth-child(6n+2) { --tint: 239 68 68; }
-.luxury-card:nth-child(6n+3) { --tint: 99 102 241; }
-.luxury-card:nth-child(6n+4) { --tint: 59 130 246; }
-.luxury-card:nth-child(6n+5) { --tint: 245 158 11; }
-.luxury-card:nth-child(6n)   { --tint: 16 185 129; }
+/* Cards — each gets its own colour wash. CardTints (JS) numbers every card in
+   page order via --tint-i; the wash then cycles through the set over time, offset
+   by that index so neighbours never match. Drawn on ::after (::before is the edge light). */
+@property --tint-c {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: rgb(34 197 94);
+}
+@keyframes tintCycle {
+  0%, 100% { --tint-c: rgb(34 197 94); }
+  16.66%   { --tint-c: rgb(239 68 68); }
+  33.33%   { --tint-c: rgb(99 102 241); }
+  50%      { --tint-c: rgb(59 130 246); }
+  66.66%   { --tint-c: rgb(245 158 11); }
+  83.33%   { --tint-c: rgb(16 185 129); }
+}
+.luxury-card { --tint-i: 0; }
+.luxury-card:nth-child(6n+2) { --tint-i: 1; }
+.luxury-card:nth-child(6n+3) { --tint-i: 2; }
+.luxury-card:nth-child(6n+4) { --tint-i: 3; }
+.luxury-card:nth-child(6n+5) { --tint-i: 4; }
+.luxury-card:nth-child(6n)   { --tint-i: 5; }
+.luxury-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(ellipse at top left,
+    color-mix(in srgb, var(--tint-c) calc(var(--tint-alpha, 0.12) * 100%), transparent), transparent 70%);
+  animation: tintCycle var(--tint-dur, 48s) linear infinite;
+  animation-delay: calc(var(--tint-dur, 48s) * var(--tint-i) / -6);
+  animation-play-state: var(--tint-play, running);
+}
 .luxury-card {
-  background:
-    radial-gradient(ellipse at top left, rgb(var(--tint) / var(--tint-alpha, 0.12)), transparent 70%),
-    linear-gradient(180deg, rgb(var(--card-2)) 0%, rgb(var(--card)) 100%);
+  position: relative;
+  isolation: isolate;
+  background: linear-gradient(180deg, rgb(var(--card-2)) 0%, rgb(var(--card)) 100%);
   border: 1px solid rgb(var(--accent) / 0.18);
   transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
 }
@@ -313,7 +340,15 @@ textarea::placeholder { color: rgb(var(--subtle)); }
   inset: 0;
   transition: filter 1.2s ease, transform 1.4s ease;
 }
-[data-intro="done"] .home-bg { filter: blur(7px) saturate(1.1); transform: scale(1.06); }
+[data-intro="done"] .home-bg {
+  filter: blur(var(--home-blur, 7px)) saturate(1.1);
+  transform: scale(1.06);
+  /* the booking view has its own effect settings (off by default) */
+  --intro-time: var(--home-time, 1);
+  --intro-size: var(--home-size, 1);
+}
+[data-intro="done"] .home-fx { opacity: var(--home-fx-alpha, 0); }
+[data-intro="done"] .home-slide { animation-play-state: var(--home-zoom-play, paused); }
 
 .home-slide {
   position: absolute;
@@ -336,12 +371,12 @@ textarea::placeholder { color: rgb(var(--subtle)); }
   position: absolute;
   inset: 0;
   background: rgb(var(--hero-overlay));
-  opacity: 0.7;
+  opacity: var(--intro-overlay, 0.7);
   transition: opacity 1s ease;
 }
-[data-intro="done"] .home-overlay { opacity: 1; }
+[data-intro="done"] .home-overlay { opacity: var(--home-overlay, 1); }
 
-.home-fx { position: absolute; inset: 0; opacity: var(--intro-alpha, 0.55); pointer-events: none; }
+.home-fx { position: absolute; inset: 0; opacity: var(--intro-alpha, 0.55); pointer-events: none; transition: opacity 1s ease; }
 
 .home-glow {
   position: absolute;
@@ -511,8 +546,16 @@ textarea::placeholder { color: rgb(var(--subtle)); }
   gap: clamp(10px, 2vh, 24px);
 }
 
-.home-h1-a { font-size: clamp(30px, min(11vw, 8vh), 96px); }
-.home-h1-b { font-size: clamp(36px, min(13.5vw, 10vh), 116px); }
+.home-h1-a { font-size: calc(clamp(30px, min(11vw, 8vh), 96px) * min(1, 13 / var(--len, 13))); }
+.home-h1-b { font-size: calc(clamp(36px, min(13.5vw, 10vh), 116px) * min(1, 11 / var(--len, 11))); }
+
+/* Extra room below gradient text so descenders (g, y, p) aren't clipped */
+.gold-text.headline-fx { padding-bottom: 0.2em; margin-bottom: -0.14em; line-height: 1.05; }
+
+/* Name ↔ slogan swap: both stacked in one grid cell so the layout never jumps */
+.headline-swap { display: grid; }
+.headline-swap > * { grid-area: 1 / 1; transition: opacity 0.9s ease, transform 0.9s ease, filter 0.9s ease; }
+.headline-swap > [data-active="false"] { opacity: 0; transform: translateY(10px); filter: blur(6px); pointer-events: none; }
 
 .home-card { padding: clamp(14px, 2.6vh, 32px) clamp(14px, 3vw, 32px); }
 .home-card-title { margin-bottom: clamp(10px, 2vh, 24px); }
