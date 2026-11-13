@@ -652,6 +652,42 @@ textarea::placeholder { color: rgb(var(--subtle)); }
     drop-shadow(0 0 calc(16px * var(--halo, 0)) rgb(var(--hl-halo) / calc(0.85 * var(--halo, 0))))
     drop-shadow(0 1px 2px rgb(var(--hl-halo) / calc(0.6 * var(--halo, 0))));
 }
+/* Small supporting text (tagline, intro hint) loses detail against a sharp photo
+   even when the colour contrast is fine, so it always keeps a minimum halo and its
+   own soft backdrop, both growing as overlay/blur are reduced. */
+/* --halo-sub is set per layer from the measured backdrop (see theme/legibility.ts) */
+/* (the intro hint/car lines are already absolutely positioned — only the tagline needs a box) */
+.home-tagline { position: relative; isolation: isolate; }
+[data-tone] .legible-text.legible-sub,
+[data-tone] .legible-sub {
+  text-shadow:
+    0 0 calc(8px + 14px * var(--halo-sub)) rgb(var(--hl-halo) / calc(0.95 * var(--halo-sub))),
+    0 1px 2px rgb(var(--hl-halo) / calc(0.9 * var(--halo-sub)));
+}
+/* Frosted patch behind small text: blurs away busy photo detail and tints it */
+[data-tone] .legible-sub::before {
+  content: "";
+  position: absolute;
+  inset: -55% -8%;
+  z-index: -1;
+  pointer-events: none;
+  background: rgb(var(--hl-halo) / calc(0.55 * var(--halo-sub, 0)));
+  -webkit-backdrop-filter: blur(calc(14px * var(--halo-sub, 0)));
+  backdrop-filter: blur(calc(14px * var(--halo-sub, 0)));
+  -webkit-mask-image: radial-gradient(closest-side, #000 55%, transparent);
+  mask-image: radial-gradient(closest-side, #000 55%, transparent);
+  transition: background 0.8s ease;
+}
+/* Gradient-filled small text can't use text-shadow (it shows through the clear fill) */
+[data-tone] .gold-text.legible-sub {
+  text-shadow: none;
+  filter:
+    drop-shadow(0 0 calc(3px + 7px * var(--halo-sub)) rgb(var(--hl-halo) / calc(0.95 * var(--halo-sub))))
+    drop-shadow(0 0 1px rgb(var(--hl-halo) / calc(0.9 * var(--halo-sub))));
+}
+.intro-sub { position: relative; isolation: isolate; }
+.legible-text, .legible-gold, .legible-sub { transition: color 0.8s ease, text-shadow 0.8s ease, filter 0.8s ease; }
+
 /* Gold that reads on a light backdrop / a dark backdrop, whatever the site mode */
 [data-tone="dark"] .gold-text.headline-fx,
 [data-tone="dark"] .legible-gold.gold-text {

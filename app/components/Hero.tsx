@@ -199,7 +199,7 @@ export default function Hero() {
       <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-luxury-black to-transparent pointer-events-none" aria-hidden />
 
       {/* Intro: logo + name */}
-      <div className="intro-layer" aria-hidden={phase === "done"} data-tone={introLegible.tone} style={{ ["--halo" as string]: introLegible.halo }}>
+      <div className="intro-layer" aria-hidden={phase === "done"} data-tone={introLegible.tone} style={{ ["--halo" as string]: introLegible.halo, ["--halo-sub" as string]: introLegible.haloSub }}>
         <BrandEmblem shimmer className="intro-emblem" />
         <h1 className="intro-title legible-text text-luxury-text uppercase" aria-label="Wimbledon">
           {"WIMBLEDON".split("").map((ch, i) => (
@@ -207,13 +207,13 @@ export default function Hero() {
           ))}
         </h1>
         <span className="intro-rule" />
-        <p className="intro-sub legible-gold gold-text uppercase">Executive Chauffeurs</p>
-        {hint && <p className="intro-hint font-sans text-luxury-text/80 uppercase">{hint}</p>}
-        <p className="intro-car font-sans text-gold/80 uppercase">{slides[current].name}</p>
+        <p className="intro-sub legible-gold legible-sub gold-text uppercase">Executive Chauffeurs</p>
+        {hint && <p className="intro-hint legible-text legible-sub font-sans font-medium uppercase">{hint}</p>}
+        <p className="intro-car legible-sub font-sans font-semibold text-gold uppercase">{slides[current].name}</p>
       </div>
 
       {/* Booking view */}
-      <div className="reveal-layer" aria-hidden={phase === "playing"} data-tone={homeLegible.tone} style={{ ["--halo" as string]: homeLegible.halo }}>
+      <div className="reveal-layer" aria-hidden={phase === "playing"} data-tone={homeLegible.tone} style={{ ["--halo" as string]: homeLegible.halo, ["--halo-sub" as string]: homeLegible.haloSub }}>
         <div className="reveal-inner">
         <div className="rv rv-1 home-badge inline-flex items-center gap-3 px-4 py-2 border border-gold/30 bg-luxury-black/50 backdrop-blur-sm">
           <span className="avail-dot flex-shrink-0" />
@@ -238,7 +238,7 @@ export default function Hero() {
           </span>
         </h2>
 
-        <p className="rv rv-3 home-tagline legible-text text-luxury-text/85 text-base md:text-lg font-sans font-light max-w-xl text-center leading-relaxed">
+        <p className="rv rv-3 home-tagline legible-text legible-sub text-base md:text-lg font-sans font-normal max-w-xl text-center leading-relaxed">
           Executive chauffeur services across London and the South East. Airport transfers,
           corporate accounts &amp; private events.
         </p>

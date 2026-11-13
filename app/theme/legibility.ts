@@ -75,6 +75,8 @@ export function legibilityFor(opts: {
   const busy = 1 - Math.min(blurPx / 10, 1); // sharp photos are busier behind text
   const need = Math.min(1, Math.max(0, (8 - ratio) / 7) * 0.85 + busy * 0.3);
   const halo = (haloPct / 100) * (0.2 + 0.8 * need);
+  // small supporting text needs help sooner: busy, sharp photos break up thin letters
+  const haloSub = Math.min(1, (haloPct / 100) * (0.4 + 0.75 * need + 0.4 * busy));
 
-  return { tone, halo: Math.round(halo * 100) / 100 };
+  return { tone, halo: Math.round(halo * 100) / 100, haloSub: Math.round(haloSub * 100) / 100 };
 }
