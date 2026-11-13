@@ -1,11 +1,12 @@
 """Usage: python scripts/build_icons.py  (source artwork lives in ../logo/)
 
 Builds the favicon set from the crowned gold "W" of the WEC emblem (the full
-emblem is unreadable at 16-32px): app/favicon.ico, app/icon.png, app/apple-icon.png.
+emblem is unreadable at 16-32px), on a transparent background: app/favicon.ico,
+app/icon.png, plus app/apple-icon.png on dark (iOS requires an opaque icon).
 """
 import os
 import numpy as np
-from PIL import Image, ImageDraw, ImageFilter
+from PIL import Image, ImageFilter
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(HERE, "..", "..", "logo", "Regal Wec Chauffeur Emblem.png")
@@ -40,11 +41,34 @@ mark = Image.fromarray(mark, "RGBA")
 mark = mark.crop(mark.getbbox())
 
 
-def tile(size, radius_frac=0.22, pad_frac=0.12):
+# Brighten/saturate a little: the shaded gold reads dull at 16-32px
+rgb = np.asarray(mark).astype(np.float32)
+lum = rgb[..., :3].mean(axis=2, keepdims=True)
+rgb[..., :3] = np.clip(lum + (rgb[..., :3] - lum) * 1.25, 0, 255) * 1.12
+mark = Image.fromarray(np.clip(rgb, 0, 255).astype(np.uint8), "RGBA")
+
+
+def transparent_icon(size, pad=0.04, edge=True):
+    """Crowned W on a transparent square, sharpened at the target size."""
+    inner = max(1, round(size * (1 - 2 * pad)))
+    m = mark.copy()
+    m.thumbnail((inner, inner), Image.LANCZOS)
+    if size <= 64:
+        m = m.filter(ImageFilter.UnsharpMask(radius=0.6, percent=140, threshold=1))
     canvas = Image.new("RGBA", (size, size), (0, 0, 0, 0))
-    mask = Image.new("L", (size, size), 0)
-    ImageDraw.Draw(mask).rounded_rectangle((0, 0, size - 1, size - 1), radius=int(size * radius_frac), fill=255)
-    canvas.paste(Image.new("RGBA", (size, size), BG), (0, 0), mask)
+    x, y = (size - m.width) // 2, (size - m.height) // 2
+    if edge:
+        # hairline dark edge so the gold still separates from white tab bars
+        a = m.split()[3].filter(ImageFilter.MaxFilter(3))
+        halo = Image.new("RGBA", m.size, (20, 14, 4, 0))
+        halo.putalpha(a.point(lambda v: int(v * 0.55)))
+        canvas.alpha_composite(halo, (x, y))
+    canvas.alpha_composite(m, (x, y))
+    return canvas
+
+
+def tile(size, pad_frac=0.12):
+    canvas = Image.new("RGBA", (size, size), BG)
     inner = int(size * (1 - 2 * pad_frac))
     m = mark.copy()
     m.thumbnail((inner, inner), Image.LANCZOS)
@@ -52,8 +76,9 @@ def tile(size, radius_frac=0.22, pad_frac=0.12):
     return canvas
 
 
-tile(512).save(os.path.join(APP, "icon.png"), optimize=True)
-apple = tile(180, radius_frac=0, pad_frac=0.14)  # iOS rounds the corners itself
-apple.convert("RGB").save(os.path.join(APP, "apple-icon.png"), optimize=True)
-tile(256, pad_frac=0.08).save(os.path.join(APP, "favicon.ico"), sizes=[(16, 16), (32, 32), (48, 48)])
+transparent_icon(512, pad=0.03, edge=False).save(os.path.join(APP, "icon.png"), optimize=True)
+tile(180).convert("RGB").save(os.path.join(APP, "apple-icon.png"), optimize=True)  # iOS needs an opaque icon
+sizes = [16, 32, 48]
+frames = [transparent_icon(n) for n in sizes]
+frames[-1].save(os.path.join(APP, "favicon.ico"), sizes=[(n, n) for n in sizes], append_images=frames[:-1])
 print("icons written")
