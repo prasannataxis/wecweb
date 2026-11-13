@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSettings } from "../theme/SettingsProvider";
 import { ACCENTS, AUTO_REVEAL_MS, Business, DEFAULT_SETTINGS as D, IDLE_RETURN_MS, INTRO_SEEN_KEY, Motion, Settings, SLOGAN_PRESETS } from "../theme/config";
@@ -102,7 +102,7 @@ function Panel({ title, subtitle, onReset, children }: {
   title: string; subtitle: string; onReset?: () => void; children: React.ReactNode;
 }) {
   return (
-    <section className="border-run luxury-card p-6 sm:p-8">
+    <section id={panelId(title)} className="border-run luxury-card p-6 sm:p-8 scroll-mt-[200px] sm:scroll-mt-[220px]">
       <div className="flex items-start justify-between gap-4">
         <h2 className="font-serif text-2xl text-luxury-text font-semibold">{title}</h2>
         {onReset && (
@@ -124,6 +124,47 @@ function Panel({ title, subtitle, onReset, children }: {
       {children}
     </section>
   );
+}
+
+const panelId = (title: string) => "panel-" + title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+
+const shortcuts = {
+  look: [
+    { title: "Appearance", label: "Appearance" },
+    { title: "Card Edge Light", label: "Edge Light" },
+    { title: "Card Colours", label: "Card Colours" },
+    { title: "Home Headline", label: "Headline" },
+    { title: "Header Edge", label: "Header Edge" },
+    { title: "Home Intro Background", label: "Intro Background" },
+    { title: "Home Page Background", label: "Home Background" },
+    { title: "Home Intro — Touch Devices", label: "Touch Reveal" },
+    { title: "Home Intro — When It Returns", label: "Intro Return" },
+  ],
+  business: [
+    { title: "Slogan", label: "Slogan" },
+    { title: "Business Details", label: "Business Details" },
+  ],
+} as const;
+
+function useActiveSection(ids: string[]) {
+  const [active, setActive] = useState(ids[0]);
+  useEffect(() => {
+    setActive(ids[0]);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        if (visible[0]) setActive(visible[0].target.id);
+      },
+      { rootMargin: "-230px 0px -55% 0px" },
+    );
+    ids.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ids.join("|")]);
+  return [active, setActive] as const;
 }
 
 const times = (v: number) => `${v.toFixed(2).replace(/\.?0+$/, "")}×`;
@@ -408,6 +449,18 @@ const tabs = [
 export default function AdminPanel() {
   const { loaded } = useSettings();
   const [tab, setTab] = useState<(typeof tabs)[number]["id"]>("look");
+  const sections = shortcuts[tab];
+  const [active, setActive] = useActiveSection(loaded ? sections.map((x) => panelId(x.title)) : []);
+
+  const jump = (id: string) => {
+    setActive(id);
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const switchTab = (id: (typeof tabs)[number]["id"]) => {
+    setTab(id);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <div className="bg-luxury-dark min-h-screen pt-32 sm:pt-36 pb-20 px-4 sm:px-6">
@@ -421,14 +474,15 @@ export default function AdminPanel() {
           </p>
         </div>
 
-        <div className="flex border-b border-luxury-border mb-8" role="tablist">
+        <div className="sticky top-[68px] sm:top-[80px] z-30 -mx-4 sm:-mx-6 px-4 sm:px-6 mb-8 bg-luxury-dark/95 backdrop-blur-md border-b border-luxury-border">
+        <div className="flex border-b border-luxury-border" role="tablist">
           {tabs.map((t) => (
             <button
               key={t.id}
               type="button"
               role="tab"
               aria-selected={tab === t.id}
-              onClick={() => setTab(t.id)}
+              onClick={() => switchTab(t.id)}
               className={`relative px-5 sm:px-8 py-4 text-sm tracking-[0.18em] uppercase font-sans font-semibold transition-colors ${
                 tab === t.id ? "text-gold" : "text-luxury-muted hover:text-luxury-text"
               }`}
@@ -437,6 +491,26 @@ export default function AdminPanel() {
               <span className={`absolute left-0 right-0 -bottom-px h-0.5 bg-gold transition-transform duration-300 ${tab === t.id ? "scale-x-100" : "scale-x-0"}`} />
             </button>
           ))}
+        </div>
+        <nav aria-label="Jump to section" className="flex gap-2 overflow-x-auto py-3 -mx-1 px-1 [scrollbar-width:none]">
+          {sections.map((x) => {
+            const id = panelId(x.title);
+            const on = active === id;
+            return (
+              <button
+                key={id}
+                type="button"
+                onClick={() => jump(id)}
+                aria-current={on ? "true" : undefined}
+                className={`flex-shrink-0 px-3.5 py-1.5 border text-xs tracking-[0.12em] uppercase font-sans font-semibold whitespace-nowrap transition-colors ${
+                  on ? "border-gold bg-gold/15 text-gold" : "border-luxury-border text-luxury-muted hover:text-luxury-text hover:border-gold/50"
+                }`}
+              >
+                {x.label}
+              </button>
+            );
+          })}
+        </nav>
         </div>
 
         {loaded && (tab === "look" ? <LookTab /> : <BusinessTab />)}

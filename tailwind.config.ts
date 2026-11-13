@@ -10,6 +10,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      screens: {
+        nav: "1360px",
+      },
       colors: {
         gold: {
           DEFAULT: v("accent"),

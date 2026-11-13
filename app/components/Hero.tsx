@@ -2,11 +2,9 @@
 import { useState, useEffect, useLayoutEffect, useCallback } from "react";
 import { useSettings } from "../theme/SettingsProvider";
 import { AUTO_REVEAL_MS, IDLE_RETURN_MS, INTRO_SEEN_KEY, Settings } from "../theme/config";
-import { CrownLogo } from "./Navbar";
+import BrandEmblem from "./BrandEmblem";
 
 type Phase = "playing" | "done";
-
-const BRAND = { line1: "Wimbledon", line2: "Executive Chauffeurs" };
 
 const slides = [
   { name: "Mercedes-Benz S-Class", image: "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=1920&q=80" },
@@ -193,11 +191,7 @@ export default function Hero() {
 
       {/* Intro: logo + name */}
       <div className="intro-layer" aria-hidden={phase === "done"}>
-        <div className="intro-crest">
-          <span className="intro-corner tl" /><span className="intro-corner tr" />
-          <span className="intro-corner bl" /><span className="intro-corner br" />
-          <CrownLogo size={84} className="intro-crown" />
-        </div>
+        <BrandEmblem shimmer className="intro-emblem" />
         <h1 className="intro-title font-serif font-semibold text-luxury-text uppercase" aria-label="Wimbledon">
           {"WIMBLEDON".split("").map((ch, i) => (
             <span key={i} className="intro-letter" style={{ animationDelay: `${0.6 + i * 0.08}s` }}>{ch}</span>
@@ -220,15 +214,19 @@ export default function Hero() {
         </div>
 
         <h2 className="rv rv-2 headline-swap font-serif leading-[0.95] text-center select-none">
-          {[
-            { key: "slogan", a: slogan1, b: slogan2, active: !showName },
-            { key: "name", a: BRAND.line1, b: BRAND.line2, active: showName },
-          ].map((h) => (
-            <span key={h.key} data-active={h.active} aria-hidden={!h.active} className="block">
-              <span className="home-h1-a block text-luxury-text font-bold tracking-tight" style={{ ["--len" as string]: Math.max(13, h.a.length) }}>{h.a}</span>
-              <span className="home-h1-b block gold-text headline-fx font-bold italic tracking-tight px-3" style={{ ["--len" as string]: Math.max(11, h.b.length) }}>{h.b}</span>
+          <span data-active={!showName} aria-hidden={showName} className="flex flex-col items-center justify-center">
+            <span className="home-h1-a block text-luxury-text font-bold tracking-tight" style={{ ["--len" as string]: Math.max(13, slogan1.length) }}>{slogan1}</span>
+            <span className="home-h1-b block gold-text headline-fx font-bold italic tracking-tight px-3" style={{ ["--len" as string]: Math.max(11, slogan2.length) }}>{slogan2}</span>
+          </span>
+          <span data-active={showName} aria-hidden={!showName} className="brand-lockup">
+            <BrandEmblem shimmer className="brand-lockup-emblem" />
+            <span className="brand-lockup-name font-serif font-semibold text-luxury-text uppercase">Wimbledon</span>
+            <span className="brand-lockup-sub">
+              <span className="brand-lockup-rule" />
+              <span className="gold-text headline-fx font-serif italic font-bold whitespace-nowrap px-2">Executive Chauffeurs</span>
+              <span className="brand-lockup-rule" />
             </span>
-          ))}
+          </span>
         </h2>
 
         <p className="rv rv-3 home-tagline text-luxury-text/85 text-base md:text-lg font-sans font-light max-w-xl text-center leading-relaxed">

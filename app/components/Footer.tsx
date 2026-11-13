@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useBusiness } from "../theme/SettingsProvider";
-import { CrownLogo } from "./Navbar";
+import BrandEmblem from "./BrandEmblem";
 
 const quickLinks = [
   { label: "Home", href: "/" },
@@ -39,7 +39,7 @@ export default function Footer() {
         <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-10 sm:gap-12">
           <div className="col-span-2 lg:col-span-1">
             <Link href="/" className="inline-flex items-center gap-3 mb-5">
-              <span className="w-10 h-10 border border-gold/30 flex items-center justify-center"><CrownLogo size={24} /></span>
+              <BrandEmblem className="h-12" />
               <span className="flex flex-col gap-1 leading-none">
                 <span className="text-sm tracking-[0.4em] text-luxury-text font-serif font-semibold uppercase">Wimbledon</span>
                 <span className="text-[11px] tracking-[0.2em] text-gold font-sans font-medium uppercase">Executive Chauffeurs</span>

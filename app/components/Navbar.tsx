@@ -1,7 +1,8 @@
 "use client";
-import { useState, useEffect, useId } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import BrandEmblem from "./BrandEmblem";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -13,54 +14,19 @@ const navLinks = [
   { label: "Contact", href: "/contact" },
 ];
 
-export function CrownLogo({ size = 28, className }: { size?: number; className?: string }) {
-  const id = useId().replace(/:/g, "");
-  const stop = (offset: string, color: string) => (
-    <stop offset={offset} style={{ stopColor: `rgb(var(${color}))` }} />
-  );
-  const fill = `url(#${id})`;
-  return (
-    <svg width={size} height={size * 0.93} viewBox="0 0 56 48" fill="none" aria-hidden className={className}>
-      <defs>
-        <linearGradient id={id} x1="0" y1="0" x2="56" y2="48" gradientUnits="userSpaceOnUse">
-          {stop("0%", "--accent-dark")}
-          {stop("30%", "--accent")}
-          {stop("55%", "--accent-light")}
-          {stop("80%", "--accent")}
-          {stop("100%", "--accent-dark")}
-        </linearGradient>
-      </defs>
-      <path d="M28 4 L22 20 L8 14 L14 30 L42 30 L48 14 L34 20 Z" fill={fill} />
-      <rect x="11" y="31" width="34" height="4" rx="0.5" fill={fill} />
-      <rect x="13" y="37" width="30" height="3" rx="0.5" fill={fill} opacity="0.6" />
-      <circle cx="28" cy="3.5" r="2" fill={fill} />
-      <circle cx="8" cy="13.5" r="2" fill={fill} />
-      <circle cx="48" cy="13.5" r="2" fill={fill} />
-      <circle cx="7" cy="29" r="1.5" fill={fill} opacity="0.8" />
-      <circle cx="49" cy="29" r="1.5" fill={fill} opacity="0.8" />
-    </svg>
-  );
-}
-
 export function Logo() {
   return (
-    <Link href="/" className="flex items-center gap-3 sm:gap-4 group flex-shrink-0">
-      <div className="relative flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 border border-gold/30 group-hover:border-gold/70 transition-colors duration-300 flex items-center justify-center">
-        <span className="absolute top-0 left-0 w-1.5 h-1.5 border-t border-l border-gold/70" />
-        <span className="absolute top-0 right-0 w-1.5 h-1.5 border-t border-r border-gold/70" />
-        <span className="absolute bottom-0 left-0 w-1.5 h-1.5 border-b border-l border-gold/70" />
-        <span className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b border-r border-gold/70" />
-        <CrownLogo />
-      </div>
-      <div className="flex flex-col gap-1 leading-none">
-        <span className="text-sm sm:text-base tracking-[0.45em] text-luxury-text font-serif font-semibold uppercase">
+    <Link href="/" className="flex items-center gap-2.5 sm:gap-3 group flex-shrink min-w-0" aria-label="Wimbledon Executive Chauffeurs — home">
+      <BrandEmblem className="h-9 sm:h-12 transition-transform duration-300 group-hover:scale-105" />
+      <span className="flex flex-col gap-1 leading-none">
+        <span className="text-[13px] sm:text-base tracking-[0.28em] sm:tracking-[0.4em] text-luxury-text font-serif font-semibold uppercase">
           Wimbledon
         </span>
         <span className="block h-px w-full bg-gradient-to-r from-transparent via-gold/60 to-transparent" />
-        <span className="text-[11px] sm:text-xs tracking-[0.18em] sm:tracking-[0.22em] text-gold font-sans font-medium uppercase whitespace-nowrap">
+        <span className="text-[10px] sm:text-xs tracking-[0.1em] sm:tracking-[0.2em] text-gold font-sans font-medium uppercase whitespace-nowrap">
           Executive Chauffeurs
         </span>
-      </div>
+      </span>
     </Link>
   );
 }
@@ -105,15 +71,15 @@ export default function Navbar() {
         solid ? "bg-luxury-black/95 backdrop-blur-md" : "bg-gradient-to-b from-luxury-black/70 to-transparent"
       }`}
     >
-      <div className={`max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between transition-all duration-500 ${scrolled ? "py-3 sm:py-4" : "py-4 sm:py-5"}`}>
+      <div className={`max-w-[1600px] mx-auto px-4 sm:px-8 flex nav:grid nav:grid-cols-[auto_1fr_auto] items-center justify-between transition-all duration-500 ${scrolled ? "py-3 sm:py-4" : "py-4 sm:py-5"}`}>
         <Logo />
 
-        <nav className="hidden xl:flex items-center gap-6 2xl:gap-9">
+        <nav className="hidden nav:flex items-center justify-center gap-8 px-12">
           {navLinks.map((link) => (
             <Link
               key={link.label}
               href={link.href}
-              className={`nav-link text-sm tracking-[0.12em] 2xl:tracking-[0.15em] uppercase whitespace-nowrap font-sans font-medium transition-colors duration-200 ${
+              className={`nav-link text-sm tracking-[0.14em] uppercase whitespace-nowrap font-sans font-medium transition-colors duration-200 ${
                 pathname === link.href ? "active text-gold" : "text-luxury-text/85 hover:text-gold"
               }`}
             >
@@ -122,18 +88,18 @@ export default function Navbar() {
           ))}
         </nav>
 
-        <div className="hidden xl:flex items-center gap-3">
+        <div className="hidden nav:flex items-center gap-3">
           <AdminLink active={pathname === "/admin"} />
           <Link
             href="/#booking"
             onClick={() => window.dispatchEvent(new Event("wl:book"))}
-            className="neon-pulse inline-block whitespace-nowrap px-5 xl:px-6 py-2.5 text-sm tracking-[0.12em] xl:tracking-[0.15em] uppercase font-sans font-semibold text-gold border border-gold/60 hover:bg-gold hover:text-on-accent transition-colors duration-300"
+            className="neon-pulse inline-block whitespace-nowrap px-6 py-2.5 text-sm tracking-[0.15em] uppercase font-sans font-semibold text-gold border border-gold/60 hover:bg-gold hover:text-on-accent transition-colors duration-300"
           >
             Book Now
           </Link>
         </div>
 
-        <div className="xl:hidden flex items-center gap-2">
+        <div className="nav:hidden flex items-center gap-2 flex-shrink-0 ml-3">
         <AdminLink active={pathname === "/admin"} />
         <button
           className="w-11 h-11 flex flex-col items-center justify-center gap-[5px] border border-gold/30"
@@ -150,7 +116,7 @@ export default function Navbar() {
 
       <div className="nav-glow-bar" />
 
-      <div className={`xl:hidden overflow-hidden transition-all duration-300 ${menuOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"}`}>
+      <div className={`nav:hidden overflow-hidden transition-all duration-300 ${menuOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"}`}>
         <div className="bg-luxury-dark border-t border-gold/10 px-6 py-4 flex flex-col">
           {navLinks.map((link) => (
             <Link
