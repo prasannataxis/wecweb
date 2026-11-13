@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import AdminPanel from "./AdminPanel";
+import AdminGate from "./AdminGate";
 
 export const metadata: Metadata = {
   title: "Site Settings | Wimbledon Executive Chauffeurs",
@@ -9,7 +10,9 @@ export const metadata: Metadata = {
 export default function AdminPage() {
   return (
     <main className="page-enter">
-      <AdminPanel />
+      <AdminGate>
+        <AdminPanel />
+      </AdminGate>
     </main>
   );
 }

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSettings } from "../theme/SettingsProvider";
 import { ACCENTS, AUTO_REVEAL_MS, BRAND_FONTS, Business, DEFAULT_SETTINGS as D, IDLE_RETURN_MS, INTRO_SEEN_KEY, Legibility, Motion, Settings, SLOGAN_PRESETS } from "../theme/config";
 import BrandEmblem from "../components/BrandEmblem";
+import { useAdminSession } from "./AdminGate";
 
 type Option<V> = { value: V; label: string; description: string };
 
@@ -623,6 +624,7 @@ function MobileSectionPicker({ sections, active, onJump }: {
 
 export default function AdminPanel() {
   const { loaded } = useSettings();
+  const session = useAdminSession();
   const [tab, setTab] = useState<(typeof tabs)[number]["id"]>("look");
   const sections = shortcuts[tab];
   const [active, setActive] = useActiveSection(loaded ? sections.map((x) => panelId(x.title)) : []);
@@ -666,7 +668,21 @@ export default function AdminPanel() {
     <div className="bg-luxury-dark min-h-screen pt-32 sm:pt-36 pb-20 px-4 sm:px-6">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8 lg:pl-[290px]">
-          <p className="text-xs tracking-[0.4em] uppercase text-gold font-sans font-medium mb-3">Admin</p>
+          <div className="flex items-center justify-between gap-4 mb-3">
+            <p className="text-xs tracking-[0.4em] uppercase text-gold font-sans font-medium">Admin</p>
+            {session && (
+              <div className="flex items-center gap-3 text-sm font-sans">
+                <span className="text-luxury-muted hidden sm:inline">Signed in as <span className="text-luxury-text font-semibold">{session.username}</span></span>
+                <button
+                  type="button"
+                  onClick={session.logout}
+                  className="px-3 py-1.5 border border-gold/50 text-gold text-xs tracking-[0.15em] uppercase font-semibold hover:bg-gold/10 transition-colors"
+                >
+                  Sign out
+                </button>
+              </div>
+            )}
+          </div>
           <h1 className="font-serif text-4xl md:text-5xl text-luxury-text font-bold">Site Settings</h1>
           <p className="mt-4 text-base text-luxury-muted font-sans leading-relaxed max-w-3xl">
             Changes apply instantly. Until the database is connected, settings are saved in this browser only —
